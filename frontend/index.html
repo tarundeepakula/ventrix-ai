@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ventrix AI — Smart WhatsApp Business Growth Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+:root{
+  --blue:#226db4;--blue-dark:#185a97;--blue-light:#eaf3fb;
+  --green:#25d366;--green-dark:#128c7e;--green-deep:#075e54;
+  --ink:#1b2a3a;--text:#4a5a6a;--muted:#68798a;
+  --bg:#f5f7fa;--white:#fff;--border:#dfe5ec;--shadow:0 8px 24px rgba(27,42,58,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}html,body{max-width:100%;overflow-x:hidden}
+body{background:var(--white);color:var(--text);font-family:Inter,system-ui,sans-serif;line-height:1.7}
+h1,h2,h3,h4{color:var(--ink);line-height:1.25}
+a{text-decoration:none;color:inherit}
+.container{max-width:1180px;margin:auto;padding:0 20px}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+.reveal{opacity:0;transform:translateY(24px);transition:.7s ease}
+.reveal.visible{opacity:1;transform:none}
+.d1{transition-delay:.08s}.d2{transition-delay:.16s}.d3{transition-delay:.24s}.d4{transition-delay:.32s}.d5{transition-delay:.4s}.d6{transition-delay:.48s}
+
+.topbar{background:var(--ink);color:#c8d4e0;font-size:12px;padding:8px 0}
+.topbar .container{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.topbar a{color:#fff;font-weight:600}.topbar i{color:var(--green)}
+
+nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.nav-inner{display:flex;justify-content:space-between;align-items:center;height:76px}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-mark{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,var(--green-deep),var(--green));font-size:18px}
+.logo strong{display:block;color:var(--ink);font-size:16px}.logo span{display:block;color:var(--muted);font-size:10px}
+.logo img{display:block;height:52px;width:auto}
+@media(max-width:600px){.logo img{height:36px}}
+.menu{display:none;gap:26px;align-items:center}
+.menu a{color:var(--text);font-size:14px;font-weight:600;transition:.2s}.menu a:hover{color:var(--blue)}
+.nav-actions{display:flex;gap:10px;align-items:center}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:0 18px;border-radius:8px;font-size:13px;font-weight:700;transition:.2s;border:1px solid transparent}
+.btn-outline{color:var(--blue);border-color:var(--blue);background:#fff}.btn-outline:hover{background:var(--blue-light)}
+.btn-primary{background:var(--blue);color:#fff}.btn-primary:hover{background:var(--blue-dark)}
+.btn-green{background:var(--green);color:#fff}.btn-green:hover{background:var(--green-dark)}
+.btn-cta{background:#15803d;color:#fff;box-shadow:0 4px 14px rgba(21,128,61,.35)}.btn-cta:hover{background:#166534;transform:translateY(-1px)}
+.btn-lg{min-height:50px;padding:0 26px;font-size:15px;border-radius:10px}
+.hamburger{display:grid;place-items:center;width:42px;height:42px;border-radius:8px;background:var(--bg);color:var(--ink);font-size:18px;border:1px solid var(--border)}
+.mobile-menu{display:none;flex-direction:column;gap:8px;padding:14px 20px 20px;background:#fff;border-bottom:1px solid var(--border)}
+.mobile-menu.open{display:flex;animation:fadeUp .3s ease}
+.mobile-menu a{padding:13px;border-radius:8px;background:var(--bg);font-weight:600;font-size:14px;text-align:center;color:var(--ink)}
+.mobile-menu a.primary{background:var(--blue);color:#fff}
+
+.hero{background:linear-gradient(180deg,#f7fafd,#fff);padding:70px 0 60px}
+.hero-grid{display:grid;gap:40px;align-items:center}
+.hero h1{font-size:clamp(30px,6vw,48px);margin-bottom:18px}
+.hero h1 span{color:var(--blue)}
+.hero p{color:var(--muted);font-size:16px;max-width:560px}
+.hero-actions{display:flex;flex-direction:column;gap:12px;margin-top:28px}
+.hero-note{display:flex;align-items:center;gap:9px;margin-top:18px;color:var(--muted);font-size:13px}
+.hero-note i{color:var(--green)}
+.hero-visual{background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;animation:fadeUp .8s ease both}
+.app-header{display:flex;justify-content:space-between;align-items:center;padding:15px 18px;border-bottom:1px solid var(--border)}
+.app-header strong{color:var(--ink);font-size:14px}
+.app-body{padding:20px;display:grid;gap:14px;background:var(--bg)}
+.mini-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.mini-card div strong{display:block;color:var(--ink);font-size:14px}.mini-card div span{font-size:12px;color:var(--muted)}
+.mini-icon{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;font-size:16px}
+.i-blue{background:var(--blue-light);color:var(--blue)}.i-green{background:#e7f9ef;color:var(--green-dark)}.i-orange{background:#fff4e5;color:#f79009}
+.badge{padding:5px 10px;border-radius:99px;font-size:10px;font-weight:700}
+.b-green{background:#e7f9ef;color:var(--green-dark)}.b-blue{background:var(--blue-light);color:var(--blue)}
+
+.logos{background:#fff;border-block:1px solid var(--border);padding:22px 0}
+.logos .container{display:flex;justify-content:center;gap:30px;flex-wrap:wrap;color:var(--muted);font-weight:700;font-size:13px}
+.logos span{display:flex;gap:8px;align-items:center}.logos i{color:var(--blue)}
+
+section{padding:75px 0}
+.section-head{text-align:center;max-width:680px;margin:0 auto 45px}
+.section-head h2{font-size:clamp(25px,5vw,36px);margin-bottom:12px}
+.section-head p{color:var(--muted);font-size:15px}
+.grid{display:grid;gap:20px}.g3{grid-template-columns:1fr}.g2{grid-template-columns:1fr}
+.card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:26px;box-shadow:var(--shadow);transition:.25s}
+.card:hover{transform:translateY(-4px);box-shadow:0 16px 36px rgba(27,42,58,.1);border-color:#c6d8ea}
+.card-icon{width:48px;height:48px;border-radius:12px;display:grid;place-items:center;font-size:19px;margin-bottom:16px}
+.ci-blue{background:var(--blue-light);color:var(--blue)}.ci-green{background:#e7f9ef;color:var(--green-dark)}
+.ci-orange{background:#fff4e5;color:#f79009}.ci-purple{background:#f1ecfb;color:#7c5cd6}
+.card h3{font-size:17px;margin-bottom:8px}.card p{color:var(--muted);font-size:14px}
+
+.how{background:var(--bg)}
+.steps{display:grid;gap:18px;max-width:1000px;margin:auto}
+.step{display:flex;gap:16px;background:#fff;border:1px solid var(--border);border-radius:12px;padding:22px;box-shadow:var(--shadow);transition:.25s}
+.step:hover{transform:translateY(-3px);border-color:#c6d8ea}
+.step-num{flex-shrink:0;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;color:#fff;background:var(--blue);font-weight:800}
+.step h3{font-size:16px;margin-bottom:6px}.step p{color:var(--muted);font-size:14px}
+
+.about{background:#fff}
+.about-grid{display:grid;gap:30px;align-items:center}
+.about h2{font-size:clamp(24px,5vw,34px);margin-bottom:14px}
+.about p{color:var(--muted);margin-bottom:14px}
+.points{display:grid;gap:12px;margin-top:20px}
+.points div{display:flex;gap:11px;align-items:flex-start;background:var(--bg);border:1px solid var(--border);padding:15px;border-radius:10px;font-size:14px;color:var(--ink)}
+.points i{color:var(--green);margin-top:3px}
+.about-panel{background:linear-gradient(135deg,var(--blue),var(--blue-dark));color:#fff;border-radius:16px;padding:30px}
+.about-panel h3{color:#fff;margin-bottom:10px}.about-panel p{color:rgba(255,255,255,.85);font-size:14px}
+.about-stats{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:22px}
+.about-stats div{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:16px}
+.about-stats strong{display:block;font-size:22px}.about-stats span{font-size:11px;opacity:.85}
+
+.pricing{background:var(--bg)}
+.price-card{max-width:420px;margin:auto;background:#fff;border:1px solid var(--border);border-radius:16px;padding:34px;text-align:center;box-shadow:var(--shadow);transition:.25s}
+.price-card:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(27,42,58,.12)}
+.plan{display:inline-block;padding:6px 14px;border-radius:99px;background:var(--blue-light);color:var(--blue);font-size:12px;font-weight:700;margin-bottom:14px}
+.price{font-size:48px;font-weight:800;color:var(--ink);margin:8px 0}
+.price small{font-size:14px;color:var(--muted);font-weight:500}
+.perks{text-align:left;margin:22px 0}
+.perks div{display:flex;gap:10px;align-items:center;padding:11px 0;border-bottom:1px dashed var(--border);font-size:14px;color:var(--ink)}
+.perks i{color:var(--green)}
+
+.cta{background:linear-gradient(135deg,var(--blue-dark),var(--blue));color:#fff;text-align:center;padding:60px 20px}
+.cta h2{color:#fff;font-size:clamp(24px,5vw,34px);margin-bottom:12px}
+.cta p{color:rgba(255,255,255,.85);max-width:600px;margin:0 auto 26px}
+.cta .btn{background:#fff;color:var(--blue-dark)}.cta .btn:hover{transform:translateY(-3px)}
+
+footer{background:var(--ink);color:#9fb0c2;padding:50px 0 25px}
+.footer-grid{display:grid;gap:30px}
+.footer-brand p{font-size:13px;max-width:320px;margin-top:12px}
+.footer-col h4{color:#fff;font-size:14px;margin-bottom:14px}
+.footer-col a{display:block;color:#9fb0c2;font-size:13px;padding:5px 0;transition:.2s}
+.footer-col a:hover{color:#fff}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.12);margin-top:35px;padding-top:20px;text-align:center;font-size:12px}
+
+@media(min-width:760px){
+  .container{padding:0 30px}.hero{padding:90px 0 70px}
+  .hero-grid{grid-template-columns:1.05fr .95fr;text-align:left}
+  .hero-actions{flex-direction:row}.g3{grid-template-columns:1fr 1fr}.g2{grid-template-columns:1fr 1fr}
+  .steps{grid-template-columns:1fr 1fr}.points{grid-template-columns:1fr 1fr}
+  .footer-grid{grid-template-columns:1.4fr 1fr 1fr 1fr}
+}
+@media(min-width:1000px){
+  .menu{display:flex}.hamburger,.mobile-menu{display:none!important}
+  .g3{grid-template-columns:repeat(3,1fr)}.hero h1{font-size:48px}
+}
+/* Dark navy top bar */
+nav{background:#1b2a3a;border-bottom:none;box-shadow:0 2px 12px rgba(27,42,58,.15)}
+.menu a{color:rgba(255,255,255,.9)}.menu a:hover{color:#fff}
+.btn-white{background:#fff;color:var(--blue)}.btn-white:hover{background:var(--blue-light)}
+.hamburger{background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.3)}
+@media(max-width:600px){.nav-actions .btn{display:none}}
+/* Sign-up popup */
+#solutions .card{cursor:pointer}
+.su-overlay{position:fixed;inset:0;z-index:200;background:rgba(27,42,58,.55);backdrop-filter:blur(4px);display:none;place-items:center;padding:16px}
+.su-overlay.open{display:grid;animation:fadeUp .3s ease}
+.su-box{position:relative;width:100%;max-width:420px;background:#fff;border-radius:18px;padding:32px 28px 26px;text-align:center;box-shadow:0 24px 60px rgba(27,42,58,.25)}
+.su-close{position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:50%;border:0;background:var(--bg);color:var(--ink);font-size:16px;cursor:pointer}
+.su-close:hover{background:var(--border)}
+.su-icon{width:58px;height:58px;margin:0 auto 14px;border-radius:14px;display:grid;place-items:center;font-size:22px}
+.su-box h3{font-size:20px;margin-bottom:8px}
+.su-box p{color:var(--muted);font-size:14px;margin-bottom:20px}
+.su-perks{display:grid;gap:8px;text-align:left;background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:20px;font-size:13px;color:var(--ink)}
+.su-perks i{color:var(--green);margin-right:8px}
+.su-box .btn{width:100%}
+.su-login{display:block;margin-top:14px;font-size:13px;color:var(--muted)}
+.su-login a{color:var(--blue);font-weight:700}
+/* Hero robot image */
+.hero-image-wrap{display:flex;justify-content:center;animation:fadeUp .8s ease both}
+.hero-image{display:block;width:90%;max-width:500px;aspect-ratio:4/5;object-fit:cover;border-radius:24px;box-shadow:0 24px 50px rgba(7,94,84,.25)}
+@media(max-width:759px){.hero-image{max-width:340px}}
+/* Footer info popups */
+.info-overlay{position:fixed;inset:0;z-index:200;background:rgba(27,42,58,.55);backdrop-filter:blur(4px);display:none;place-items:center;padding:16px}
+.info-overlay.open{display:grid;animation:fadeUp .3s ease}
+.info-box{position:relative;width:100%;max-width:560px;max-height:85vh;overflow-y:auto;background:#fff;border-radius:18px;padding:30px 28px 26px;box-shadow:0 24px 60px rgba(27,42,58,.25)}
+.info-box h3{font-size:21px;margin-bottom:6px;padding-right:40px}
+.info-box .info-sub{color:var(--muted);font-size:13px;margin-bottom:18px}
+.info-box h4{font-size:14px;margin:16px 0 6px}
+.info-box p,.info-box li{color:var(--text);font-size:14px}
+.info-box ul{padding-left:20px;display:grid;gap:6px}
+.contact-list{display:grid;gap:10px;margin-top:6px}
+.contact-list a{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--bg);border:1px solid var(--border);border-radius:12px;color:var(--ink);font-weight:600;font-size:14px;transition:.2s}
+.contact-list a:hover{border-color:var(--blue);background:var(--blue-light)}
+.contact-list i{width:20px;text-align:center;color:var(--green-dark);font-size:17px}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-inner">
+    <a class="logo" href="index.html"><img src="ventrix_logo_white_text.png" alt="Ventrix AI"></a>
+    <div class="menu">
+      <a href="#home">Home</a><a href="#solutions">Solutions</a><a href="#process">Process</a>
+      <a href="#company">Company</a><a href="#plans">Plans</a>
+    </div>
+    <div class="nav-actions">
+      <a class="btn btn-white" href="login.html">Login</a>
+      <a class="btn btn-cta" href="signup.html">Get Started</a>
+      <button class="hamburger" onclick="toggleMenu()"><i class="fas fa-bars"></i></button>
+    </div>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#home" onclick="toggleMenu()">Home</a>
+  <a href="#solutions" onclick="toggleMenu()">Solutions</a>
+  <a href="#process" onclick="toggleMenu()">Process</a>
+  <a href="#company" onclick="toggleMenu()">Company</a>
+  <a href="#plans" onclick="toggleMenu()">Plans</a>
+  <a href="login.html">Login</a>
+  <a class="primary" href="signup.html">Get Started</a>
+</div>
+
+<header class="hero" id="home">
+  <div class="container hero-grid">
+    <div class="reveal visible">
+      <h1>Turn every WhatsApp conversation into a <span>business opportunity</span></h1>
+      <p>Ventrix AI helps shops, agencies, coaches, and service businesses respond instantly, follow up automatically, and convert more WhatsApp enquiries into paying customers.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary btn-lg" href="signup.html"><i class="fas fa-rocket"></i> Get Started Now</a>
+        <a class="btn btn-outline btn-lg" href="#process"><i class="fas fa-play"></i> See How It Works</a>
+      </div>
+      <div class="hero-note"><i class="fas fa-shield-halved"></i> Built for small businesses, agencies, and growing teams</div>
+    </div>
+
+    <div class="hero-image-wrap reveal visible d2">
+      <img class="hero-image" src="hero-robot.jpeg" alt="Ventrix AI chatbot replying to WhatsApp messages">
+    </div>
+  </div>
+</header>
+
+<div class="logos">
+  <div class="container">
+    <span><i class="fas fa-store"></i> Local Shops</span>
+    <span><i class="fas fa-briefcase"></i> Agencies</span>
+    <span><i class="fas fa-graduation-cap"></i> Coaches</span>
+    <span><i class="fas fa-house"></i> Real Estate</span>
+    <span><i class="fas fa-stethoscope"></i> Clinics</span>
+  </div>
+</div>
+
+<section id="solutions">
+  <div class="container">
+    <div class="section-head reveal">
+      <h2>Built to solve everyday business problems</h2>
+      <p>Stop losing customers because of late replies, missed follow-ups, and unorganised enquiries.</p>
+    </div>
+    <div class="grid g3">
+      <div class="card reveal d1"><div class="card-icon ci-blue"><i class="fas fa-comments"></i></div><h3>Instant Customer Response</h3><p>Answer common questions immediately, even when your team is busy or offline.</p></div>
+      <div class="card reveal d2"><div class="card-icon ci-green"><i class="fas fa-user-check"></i></div><h3>Smart Lead Qualification</h3><p>Identify serious buyers automatically and prioritise the customers most likely to purchase.</p></div>
+      <div class="card reveal d3"><div class="card-icon ci-orange"><i class="fas fa-rotate"></i></div><h3>Automatic Follow-ups</h3><p>Send reminders and follow-up messages without manually tracking every customer.</p></div>
+      <div class="card reveal d4"><div class="card-icon ci-purple"><i class="fas fa-tags"></i></div><h3>Organised Enquiries</h3><p>Keep every customer conversation, requirement, and status in one organised system.</p></div>
+      <div class="card reveal d5"><div class="card-icon ci-blue"><i class="fas fa-chart-simple"></i></div><h3>Business Insights</h3><p>Understand which campaigns bring replies, leads, and actual customer interest.</p></div>
+      <div class="card reveal d6"><div class="card-icon ci-green"><i class="fas fa-users"></i></div><h3>Team-friendly Dashboard</h3><p>Manage customer conversations and marketing activities from one simple workspace.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="how" id="process">
+  <div class="container">
+    <div class="section-head reveal">
+      <h2>From enquiry to customer in four steps</h2>
+      <p>A simple process designed for busy business owners.</p>
+    </div>
+    <div class="steps">
+      <div class="step reveal d1"><div class="step-num">1</div><div><h3>Connect Your Business</h3><p>Add your business details and connect your WhatsApp number.</p></div></div>
+      <div class="step reveal d2"><div class="step-num">2</div><div><h3>Add Your Customers</h3><p>Import existing contacts or capture new enquiries automatically.</p></div></div>
+      <div class="step reveal d3"><div class="step-num">3</div><div><h3>Set AI Rules</h3><p>Teach the AI how to answer questions, share information, and qualify leads.</p></div></div>
+      <div class="step reveal d4"><div class="step-num">4</div><div><h3>Grow Automatically</h3><p>Send campaigns, follow up, and track results from your dashboard.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="about" id="company">
+  <div class="container about-grid">
+    <div class="reveal">
+      <h2>Technology that works like your best sales assistant</h2>
+      <p>Ventrix AI is designed for businesses that receive regular customer enquiries on WhatsApp but struggle to reply quickly, follow up consistently, and manage leads properly.</p>
+      <p>Our platform combines automation, AI conversations, and simple reporting so business owners can focus on service and sales.</p>
+      <div class="points">
+        <div><i class="fas fa-check-circle"></i> Designed for non-technical business owners</div>
+        <div><i class="fas fa-check-circle"></i> Affordable monthly pricing</div>
+        <div><i class="fas fa-check-circle"></i> Works for shops, agencies, coaches, and clinics</div>
+        <div><i class="fas fa-check-circle"></i> Helps reduce missed customer enquiries</div>
+      </div>
+    </div>
+    <div class="about-panel reveal d2">
+      <h3>Ventrix AI Growth Plan</h3>
+      <p>Everything you need to manage WhatsApp marketing and customer conversations.</p>
+      <div class="about-stats">
+        <div><strong>₹499</strong><span>Per month</span></div>
+        <div><strong>Full Access</strong><span>All features included</span></div>
+        <div><strong>24/7</strong><span>AI availability</span></div>
+        <div><strong>1 Dashboard</strong><span>Complete control</span></div>
+      </div>
+      <a class="btn btn-green btn-lg" href="signup.html" style="width:100%;margin-top:22px">Get Started — ₹499/month</a>
+    </div>
+  </div>
+</section>
+
+<section class="pricing" id="plans">
+  <div class="container">
+    <div class="section-head reveal">
+      <h2>One simple plan for growing businesses</h2>
+      <p>No complicated packages. Get full access with one affordable monthly subscription.</p>
+    </div>
+    <div class="price-card reveal d1">
+      <div class="plan">Growth Plan</div>
+      <div class="price">₹499 <small>/ month</small></div>
+      <p style="color:var(--muted);font-size:13px">Full access · Cancel anytime</p>
+      <div class="perks">
+        <div><i class="fas fa-check-circle"></i> WhatsApp enquiry management</div>
+        <div><i class="fas fa-check-circle"></i> AI-powered automatic replies</div>
+        <div><i class="fas fa-check-circle"></i> Bulk promotional campaigns</div>
+        <div><i class="fas fa-check-circle"></i> Automatic customer follow-ups</div>
+        <div><i class="fas fa-check-circle"></i> Lead status and customer notes</div>
+        <div><i class="fas fa-check-circle"></i> Campaign and reply analytics</div>
+      </div>
+      <a class="btn btn-primary btn-lg" href="signup.html" style="width:100%">Get Started — ₹499/month</a>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="container">
+    <h2>Never miss another WhatsApp customer</h2>
+    <p>Let Ventrix AI respond, follow up, and organise your enquiries while you focus on growing your business.</p>
+    <a class="btn btn-lg" href="signup.html"><i class="fas fa-arrow-right"></i> Get Started Today</a>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+                <a class="logo" href="index.html"><img src="ventrix_logo_white_text.png" alt="Ventrix AI"></a>
+        <p>A smart WhatsApp business growth platform for automatic replies, customer follow-ups, campaigns, and lead management.</p>
+      </div>
+      <div class="footer-col"><h4>Product</h4><a href="#solutions">Solutions</a><a href="#process">Process</a><a href="#plans">Plans</a><a href="#company">Company</a></div>
+      <div class="footer-col"><h4>Account</h4><a href="login.html">Login</a><a href="signup.html">Get Started</a></div>
+      <div class="footer-col"><h4>Support</h4><a href="#" onclick="openInfo('help');return false;">Help Centre</a><a href="#" onclick="openInfo('contact');return false;">Contact Us</a><a href="#" onclick="openInfo('privacy');return false;">Privacy Policy</a><a href="#" onclick="openInfo('terms');return false;">Terms</a></div>
+    </div>
+    <div class="footer-bottom">© 2026 Ventrix Technologies. All rights reserved.</div>
+  </div>
+</footer>
+
+<!-- Sign-up popup -->
+<div class="su-overlay" id="signupPopup" onclick="if(event.target===this)closeSignup()">
+  <div class="su-box" role="dialog" aria-modal="true" aria-labelledby="suTitle">
+    <button class="su-close" onclick="closeSignup()" aria-label="Close"><i class="fas fa-xmark"></i></button>
+    <div class="su-icon" id="suIcon"></div>
+    <h3 id="suTitle">Get started with Ventrix AI</h3>
+    <p id="suText">Create your account to start using this feature.</p>
+    <div class="su-perks">
+      <div><i class="fas fa-check-circle"></i>All features included for ₹499/month</div>
+      <div><i class="fas fa-check-circle"></i>Set up in minutes, no technical skills needed</div>
+      <div><i class="fas fa-check-circle"></i>Cancel anytime</div>
+    </div>
+    <a class="btn btn-cta btn-lg" href="signup.html"><i class="fas fa-user-plus"></i> Sign Up Now</a>
+    <span class="su-login">Already have an account? <a href="login.html">Login</a></span>
+  </div>
+</div>
+
+<!-- Footer info popup -->
+<div class="info-overlay" id="infoPopup" onclick="if(event.target===this)closeInfo()">
+  <div class="info-box" role="dialog" aria-modal="true">
+    <button class="su-close" onclick="closeInfo()" aria-label="Close"><i class="fas fa-xmark"></i></button>
+    <div id="infoContent"></div>
+  </div>
+</div>
+
+<script>
+function toggleMenu(){document.getElementById('mobileMenu').classList.toggle('open')}
+const observer=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target)}})},{threshold:.15});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+// Sign-up popup for the feature cards
+function openSignup(card){
+  const icon=card.querySelector('.card-icon');
+  const title=card.querySelector('h3').textContent;
+  const suIcon=document.getElementById('suIcon');
+  suIcon.className='su-icon '+[...icon.classList].filter(c=>c.startsWith('ci-')).join(' ');
+  suIcon.innerHTML=icon.innerHTML;
+  document.getElementById('suTitle').textContent=title;
+  document.getElementById('suText').textContent='Sign up to start using '+title.toLowerCase()+' for your business.';
+  document.getElementById('signupPopup').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeSignup(){
+  document.getElementById('signupPopup').classList.remove('open');
+  document.body.style.overflow='';
+}
+document.querySelectorAll('#solutions .card').forEach(card=>{
+  card.addEventListener('click',()=>openSignup(card));
+});
+
+// Footer info popups: Help Centre, Contact Us, Privacy Policy, Terms
+const infoPages={
+  help:`<h3>Help Centre</h3><p class="info-sub">Answers to common questions about Ventrix AI.</p>
+    <h4>How do I connect my WhatsApp number?</h4><p>After signing up, open Settings in your dashboard and follow the steps to connect your WhatsApp Business number.</p>
+    <h4>Can the AI reply in Telugu and Hindi?</h4><p>Yes. Ventrix AI replies in English, Telugu and Hindi, matching the language your customer writes in.</p>
+    <h4>How do I send bulk messages?</h4><p>Go to Bulk Messages, choose a template and audience, then send now or schedule it for later.</p>
+    <h4>How much does it cost?</h4><p>One plan: ₹499/month with all features included. You can cancel anytime.</p>
+    <h4>Still need help?</h4><p>Reach us through <a href="#" onclick="openInfo('contact');return false;" style="color:var(--blue);font-weight:700">Contact Us</a>.</p>`,
+  contact:`<h3>Contact Us</h3><p class="info-sub">We usually reply within a few hours, Monday to Saturday.</p>
+    <div class="contact-list">
+      <a href="https://wa.me/919999999999" target="_blank"><i class="fab fa-whatsapp"></i> Chat on WhatsApp</a>
+      <a href="mailto:support@ventrix.ai"><i class="fas fa-envelope"></i> support@ventrix.ai</a>
+      <a href="tel:+919999999999"><i class="fas fa-phone"></i> +91 99999 99999</a>
+    </div>`,
+  privacy:`<h3>Privacy Policy</h3><p class="info-sub">Last updated: October 2026</p>
+    <h4>What we collect</h4><p>Your account details (name, email, phone), business details, and the customer contacts and messages you manage through Ventrix AI.</p>
+    <h4>How we use it</h4><ul><li>To run the service: sending messages, AI replies, campaigns and analytics.</li><li>To support your account and send important service updates.</li></ul>
+    <h4>What we don't do</h4><p>We do not sell your data or your customers' data to anyone.</p>
+    <h4>Your choices</h4><p>You can export or delete your data at any time by contacting us.</p>`,
+  terms:`<h3>Terms of Service</h3><p class="info-sub">Last updated: October 2026</p>
+    <h4>Using Ventrix AI</h4><p>You agree to use Ventrix AI only for lawful business communication and to follow WhatsApp's Business and Commerce policies.</p>
+    <h4>Messaging rules</h4><ul><li>Only message customers who have agreed to hear from you.</li><li>No spam, misleading offers or prohibited content.</li></ul>
+    <h4>Billing</h4><p>The Growth Plan is ₹499/month, billed monthly. You can cancel anytime; access continues until the end of the paid month.</p>
+    <h4>Changes</h4><p>We may update these terms and will notify you of important changes.</p>`
+};
+function openInfo(key){
+  document.getElementById('infoContent').innerHTML=infoPages[key];
+  document.getElementById('infoPopup').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeInfo(){
+  document.getElementById('infoPopup').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+// Esc key closes any open popup
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSignup();closeInfo();}});
+</script>
+
+</body>
+</html>

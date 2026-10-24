@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Connect WhatsApp — Ventrix AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+:root{--green:#25d366;--green-dark:#128c7e;--green-deep:#075e54;--navy:#172b4d;--text:#344054;--muted:#667085;--light:#f5f7fa;--border:#e4e7ec;--success:#12b76a;--warning:#f79009;--blue:#2970ff;--shadow:0 12px 30px rgba(16,24,40,.07)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:var(--light);font-family:Inter,sans-serif;color:var(--text);padding:40px 16px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(25px)}to{opacity:1;transform:none}}
+@keyframes popIn{0%{opacity:0;transform:translateY(20px) scale(.96)}100%{opacity:1;transform:none}}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.topbar{max-width:480px;margin:0 auto 24px}
+.back-btn{display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:0 16px;border-radius:10px;font-size:12px;font-weight:800;color:var(--navy);background:#fff;border:1px solid var(--border);cursor:pointer;transition:.25s}
+.back-btn:hover{border-color:var(--blue);color:var(--blue)}
+
+/* progress across signup → payment → connect */
+.flow{display:flex;justify-content:center;gap:8px;max-width:480px;margin:0 auto 26px;font-size:11px;font-weight:700;color:var(--muted)}
+.flow span{display:flex;align-items:center;gap:6px}
+.flow i{font-size:14px}.flow .done{color:var(--success)}.flow .now{color:var(--navy)}
+.flow .line{width:28px;height:2px;background:var(--border);align-self:center}
+
+.header{text-align:center;margin-bottom:26px;animation:fadeUp .6s both}
+.header h1{color:var(--navy);font-size:24px;margin-bottom:8px}
+.header p{color:var(--muted);font-size:13px}
+
+.card{background:#fff;border:1px solid var(--border);border-radius:20px;padding:30px;max-width:480px;margin:0 auto;box-shadow:var(--shadow);animation:popIn .5s ease;text-align:center}
+.brand-logo{display:block;height:48px;width:auto;max-width:100%;object-fit:contain;margin:0 auto 18px}
+.card h2{color:var(--navy);font-size:18px;margin-bottom:6px}
+.sub{color:var(--muted);font-size:12.5px;margin-bottom:22px;line-height:1.6}
+
+.how{text-align:left;display:grid;gap:12px;margin-bottom:22px}
+.how>div{display:flex;gap:12px;align-items:flex-start;background:var(--light);border:1px solid var(--border);border-radius:12px;padding:13px 14px}
+.how b{flex-shrink:0;width:26px;height:26px;border-radius:50%;background:var(--green-dark);color:#fff;font-size:12px;display:grid;place-items:center}
+.how strong{display:block;color:var(--navy);font-size:13px}
+.how span{font-size:12px;color:var(--muted)}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:50px;padding:0 18px;border-radius:10px;font-size:14px;font-weight:800;color:#fff;background:linear-gradient(120deg,var(--green-deep),var(--green-dark));border:0;cursor:pointer;transition:.25s}
+.btn:hover{transform:translateY(-2px)}
+.btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.btn-ghost{background:#fff;color:var(--navy);border:1px solid var(--border);margin-top:10px}
+
+.need{text-align:left;margin-top:20px;padding:14px;border-radius:12px;background:#fffaeb;border:1px solid #fedf89;font-size:12px;color:#93370d}
+.need strong{display:block;margin-bottom:6px}
+.need li{margin-left:16px;margin-top:3px}
+.secure{display:flex;align-items:center;justify-content:center;gap:6px;font-size:11px;color:var(--muted);margin-top:16px}
+
+.hidden{display:none!important}
+
+/* demo window (stands in for Meta's signup window until the backend exists) */
+.overlay{position:fixed;inset:0;background:rgba(16,24,40,.55);display:grid;place-items:center;padding:16px;z-index:50;animation:fadeUp .25s ease}
+.modal{background:#fff;border-radius:18px;width:100%;max-width:400px;padding:26px;box-shadow:0 24px 60px rgba(16,24,40,.25);text-align:left}
+.demo-tag{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#7a2e0e;background:#fef0c7;padding:4px 9px;border-radius:99px;margin-bottom:12px}
+.modal h3{color:var(--navy);font-size:16px;margin-bottom:6px}
+.modal p{font-size:12px;color:var(--muted);margin-bottom:14px}
+label{display:block;font-size:12px;font-weight:700;color:var(--navy);margin:12px 0 6px}
+input{width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:10px;font-size:14px;outline:none;transition:.2s;font-family:inherit}
+input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(41,112,255,.12)}
+.err{font-size:11px;color:#d92d20;margin-top:6px}
+
+.steps{display:grid;gap:12px;margin:6px 0 4px}
+.steps div{display:flex;align-items:center;gap:12px;font-size:13px;color:var(--muted)}
+.steps i{width:22px;text-align:center;font-size:16px}
+.steps .active{color:var(--navy);font-weight:600}
+.steps .active i{color:var(--blue);animation:spin 1s linear infinite}
+.steps .ok{color:var(--navy)}.steps .ok i{color:var(--success)}
+
+.success-icon{width:64px;height:64px;margin:0 auto 16px;background:#eaf9ef;border:2px solid var(--success);border-radius:50%;display:grid;place-items:center;color:var(--success);font-size:28px;animation:popIn .5s ease}
+.details{text-align:left;border:1px solid var(--border);border-radius:12px;margin:4px 0 20px;overflow:hidden}
+.details div{display:flex;justify-content:space-between;gap:10px;padding:11px 14px;font-size:12.5px;border-bottom:1px solid var(--border)}
+.details div:last-child{border-bottom:0}
+.details span{color:var(--muted)}.details strong{color:var(--navy);text-align:right}
+.pill{font-size:11px;font-weight:800;padding:3px 9px;border-radius:99px;background:#eaf9ef;color:#067647}
+</style>
+<script src="js/api.js"></script>
+<script src="js/auth-guard.js"></script>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="goBack()"><i class="bi bi-arrow-left"></i> Back</button>
+</div>
+
+<div class="flow">
+  <span class="done"><i class="bi bi-check-circle-fill"></i> Sign up</span><span class="line"></span>
+  <span class="done"><i class="bi bi-check-circle-fill"></i> Payment</span><span class="line"></span>
+  <span class="now"><i class="bi bi-3-circle-fill"></i> Connect WhatsApp</span>
+</div>
+
+<div class="header">
+  <h1>Connect Your WhatsApp</h1>
+  <p>Link your WhatsApp Business number to start using Ventrix AI</p>
+</div>
+
+<div class="card">
+  <!-- STEP 1: START -->
+  <div id="stepStart">
+        <img src="logo.png" alt="Ventrix AI" class="brand-logo">
+    <h2>Connect in about 2 minutes</h2>
+    <p class="sub">A secure Meta window will open. Your number is verified by Meta — Ventrix AI never sees your password.</p>
+
+    <div class="how">
+      <div><b>1</b><div><strong>Log in with Facebook</strong><span>Use the account that manages your business</span></div></div>
+      <div><b>2</b><div><strong>Choose your business &amp; number</strong><span>Pick an existing WhatsApp Business number or add a new one</span></div></div>
+      <div><b>3</b><div><strong>Verify with a code</strong><span>Meta sends a 6-digit code by SMS or call to confirm the number</span></div></div>
+    </div>
+
+    <button class="btn" onclick="launchWhatsAppSignup()"><i class="fa-brands fa-whatsapp"></i> Connect with WhatsApp</button>
+
+    <div class="need">
+      <strong><i class="bi bi-info-circle"></i> Before you start, keep ready:</strong>
+      <ul>
+        <li>Access to your business Facebook account</li>
+        <li>The phone that has your business number (to receive the code)</li>
+        <li>A payment method to add in your WhatsApp Business account</li>
+      </ul>
+    </div>
+    <div class="secure"><i class="bi bi-shield-lock"></i> Official WhatsApp Business Platform connection</div>
+  </div>
+
+  <!-- STEP 2: SUCCESS -->
+  <div id="stepDone" class="hidden">
+    <div class="success-icon"><i class="bi bi-check-lg"></i></div>
+    <h2>WhatsApp Connected!</h2>
+    <p class="sub">Ventrix AI can now reply to and follow up with your customers.</p>
+    <div class="details">
+      <div><span>Business</span><strong id="dBusiness"></strong></div>
+      <div><span>WhatsApp number</span><strong id="dNumber"></strong></div>
+      <div><span>Status</span><strong><span class="pill">Active</span></strong></div>
+    </div>
+    <button class="btn" onclick="goToDashboard()"><i class="bi bi-arrow-right"></i> Continue to Dashboard</button>
+  </div>
+</div>
+
+<!-- DEMO WINDOW: shown only until the real Meta signup is connected -->
+<div class="overlay hidden" id="demoWindow">
+  <div class="modal">
+    <div id="demoForm">
+      <span class="demo-tag">Demo preview</span>
+      <h3>Simulated signup window</h3>
+      <p>In the live version, Meta's official window opens here. For this preview, enter sample details.</p>
+      <label for="bizName">Business name</label>
+      <input id="bizName" placeholder="e.g. Sharma Electronics">
+      <label for="phoneInput">WhatsApp Business number</label>
+      <input id="phoneInput" type="tel" placeholder="+91 98765 43210" maxlength="16">
+      <div class="err hidden" id="formErr">Enter a business name and a valid number.</div>
+      <button class="btn" style="margin-top:18px" onclick="runDemo()">Continue</button>
+      <button class="btn btn-ghost" onclick="closeDemo()">Cancel</button>
+    </div>
+
+    <div id="demoProgress" class="hidden">
+      <span class="demo-tag">Demo preview</span>
+      <h3>Connecting your number…</h3>
+      <p>This usually takes a few seconds.</p>
+      <div class="steps" id="progressSteps">
+        <div data-text="Business account linked"><i class="bi bi-circle"></i><span>Linking business account</span></div>
+        <div data-text="Number verified"><i class="bi bi-circle"></i><span>Verifying phone number</span></div>
+        <div data-text="Messages enabled for Ventrix AI"><i class="bi bi-circle"></i><span>Enabling messages for Ventrix AI</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function goBack(){ window.location.href='payment.html'; }
+function goToDashboard(){ window.location.href='dashboard.html'; }
+
+/* ---------------------------------------------------------------
+   LIVE VERSION (after backend is approved):
+   Replace the body of launchWhatsAppSignup() with Meta's
+   Embedded Signup (FB.login with your config_id). When Meta's
+   window finishes it returns waba_id, phone_number_id and a code.
+   Send those to your backend, then call showConnected(...).
+   --------------------------------------------------------------- */
+function launchWhatsAppSignup(){
+  document.getElementById('demoWindow').classList.remove('hidden');
+  document.getElementById('bizName').focus();
+}
+
+function closeDemo(){
+  document.getElementById('demoWindow').classList.add('hidden');
+}
+
+function runDemo(){
+  const biz=document.getElementById('bizName').value.trim();
+  const phone=document.getElementById('phoneInput').value.trim();
+  const digits=phone.replace(/\D/g,'');
+  const err=document.getElementById('formErr');
+  if(!biz||digits.length<10){err.classList.remove('hidden');return;}
+  err.classList.add('hidden');
+
+  document.getElementById('demoForm').classList.add('hidden');
+  document.getElementById('demoProgress').classList.remove('hidden');
+
+  const rows=[...document.querySelectorAll('#progressSteps > div')];
+  rows.forEach((row,i)=>{
+    setTimeout(()=>{
+      row.className='active';
+      row.querySelector('i').className='bi bi-arrow-repeat';
+    },i*900);
+    setTimeout(()=>{
+      row.className='ok';
+      row.querySelector('i').className='bi bi-check-circle-fill';
+      row.querySelector('span').textContent=row.dataset.text;
+    },i*900+850);
+  });
+  setTimeout(()=>{ closeDemo(); showConnected(biz,phone); },rows.length*900+400);
+}
+
+function showConnected(business,number){
+  try{
+    localStorage.setItem('ventrix_whatsapp','true');
+    localStorage.setItem('ventrix_number',number);
+    localStorage.setItem('ventrix_business',business);
+  }catch(e){}
+  document.getElementById('dBusiness').textContent=business;
+  document.getElementById('dNumber').textContent=number;
+  document.getElementById('stepStart').classList.add('hidden');
+  document.getElementById('stepDone').classList.remove('hidden');
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape') closeDemo();
+  if(e.key==='Enter' && !document.getElementById('demoWindow').classList.contains('hidden')
+     && !document.getElementById('demoForm').classList.contains('hidden')) runDemo();
+});
+</script>
+</body>
+</html>
