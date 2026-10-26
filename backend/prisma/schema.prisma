@@ -1,6 +1,5 @@
-// Ventrix AI database schema.
-// Phase 1 holds accounts and login. Later phases add contacts, messages,
-// campaigns and so on, each with its own migration.
+// Ventrix AI database tables.
+// Every table hangs off Business, so each business only ever sees its own data.
 
 generator client {
   provider = "prisma-client-js"
@@ -16,7 +15,7 @@ enum UserRole {
   AGENT
 }
 
-// One business per signup. Every customer's data hangs off its business.
+// One business per signup.
 model Business {
   id              String   @id @default(uuid())
   name            String
@@ -24,33 +23,30 @@ model Business {
   city            String?
   address         String?
   pincode         String?
-  alternatePhone  String?  @map("alternate_phone")
   timezone        String   @default("Asia/Kolkata")
   defaultLanguage String   @default("en") @map("default_language")
   logoUrl         String?  @map("logo_url")
   createdAt       DateTime @default(now()) @map("created_at")
   updatedAt       DateTime @updatedAt @map("updated_at")
 
-  users    User[]
-  contacts Contact[]
+  users User[]
 
   @@map("businesses")
 }
 
 // People who log in. The person who signs up is the OWNER.
 model User {
-  id                String    @id @default(uuid())
-  businessId        String    @map("business_id")
-  fullName          String    @map("full_name")
-  email             String    @unique
-  phone             String    @unique // can also be used to log in
-  passwordHash      String    @map("password_hash")
-  role              UserRole  @default(OWNER)
-  preferredLanguage String    @default("en") @map("preferred_language")
-  avatarUrl         String?   @map("avatar_url")
-  emailVerifiedAt   DateTime? @map("email_verified_at")
-  createdAt         DateTime  @default(now()) @map("created_at")
-  updatedAt         DateTime  @updatedAt @map("updated_at")
+  id              String    @id @default(uuid())
+  businessId      String    @map("business_id")
+  fullName        String    @map("full_name")
+  email           String    @unique
+  phone           String    @unique
+  passwordHash    String    @map("password_hash")
+  role            UserRole  @default(OWNER)
+  avatarUrl       String?   @map("avatar_url")
+  phoneVerifiedAt DateTime? @map("phone_verified_at")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
 
   business            Business             @relation(fields: [businessId], references: [id], onDelete: Cascade)
   sessions            Session[]
@@ -60,7 +56,7 @@ model User {
   @@map("users")
 }
 
-// A logged-in browser. Only a hash of the cookie value is stored.
+// A logged-in browser. Only a hash of the cookie is stored.
 model Session {
   id        String   @id @default(uuid())
   userId    String   @map("user_id")
@@ -89,33 +85,4 @@ model PasswordResetToken {
 
   @@index([userId])
   @@map("password_reset_tokens")
-}
-
-// ---------- Contacts ----------
-
-// A customer or lead the business talks to on WhatsApp.
-// phone is always stored in international format, e.g. +919876543210,
-// so the same person is never saved twice by mistake.
-model Contact {
-  id            String    @id @default(uuid())
-  businessId    String    @map("business_id")
-  name          String
-  phone         String
-  language      String    @default("English")
-  tag           String    @default("Customer") // Customer, Hot Lead, Interested, Follow-up
-  city          String?
-  email         String?
-  notes         String?
-  optedIn       Boolean   @default(true) @map("opted_in") // agreed to receive WhatsApp messages
-  source        String    @default("manual") // manual, import, whatsapp
-  lastInboundAt DateTime? @map("last_inbound_at") // last time they messaged the business
-  createdAt     DateTime  @default(now()) @map("created_at")
-  updatedAt     DateTime  @updatedAt @map("updated_at")
-
-  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
-
-  @@unique([businessId, phone])
-  @@index([businessId, tag])
-  @@index([businessId, language])
-  @@map("contacts")
 }

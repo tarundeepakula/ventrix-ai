@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Growth Plan — Ventrix AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+:root{--green:#25d366;--green-dark:#128c7e;--green-deep:#075e54;--navy:#172b4d;--text:#344054;--muted:#667085;--light:#f5f7fa;--border:#e4e7ec;--success:#12b76a;--blue:#2970ff;--purple:#7f56d9;--shadow:0 12px 30px rgba(16,24,40,.07);--radius:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:var(--light);font-family:Inter,sans-serif;color:var(--text);padding:40px 20px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(25px)}to{opacity:1;transform:none}}
+@keyframes popIn{0%{opacity:0;transform:translateY(20px) scale(.96)}100%{opacity:1;transform:none}}
+@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(37,211,102,.4)}50%{box-shadow:0 0 0 12px rgba(37,211,102,0)}}
+.topbar{display:flex;align-items:center;justify-content:space-between;max-width:520px;margin:0 auto 30px;animation:fadeDown .6s both}
+.back-btn{display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:0 16px;border-radius:10px;font-size:12px;font-weight:800;color:var(--navy);background:#fff;border:1px solid var(--border);cursor:pointer;transition:.25s}
+.back-btn:hover{border-color:var(--blue);color:var(--blue)}
+.header{text-align:center;margin-bottom:30px;animation:fadeUp .6s both}
+.header h1{color:var(--navy);font-size:24px;margin-bottom:8px}
+.header p{color:var(--muted);font-size:13px}
+.plan{background:#fff;border:2px solid var(--green);border-radius:20px;padding:30px;max-width:520px;margin:0 auto;box-shadow:var(--shadow);animation:popIn .5s ease;position:relative;text-align:center}
+.badge{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--green);color:#fff;padding:6px 18px;border-radius:99px;font-size:10px;font-weight:800;letter-spacing:.5px}
+.plan h3{color:var(--navy);font-size:20px;margin-bottom:6px}
+.plan .price{font-size:38px;color:var(--navy);font-weight:800;margin:12px 0 4px}
+.plan .price span{font-size:14px;color:var(--muted);font-weight:500}
+.plan .desc{color:var(--muted);font-size:12.5px;margin-bottom:22px}
+.features{list-style:none;text-align:left;margin-bottom:24px}
+.features li{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text);margin-bottom:11px}
+.features li i{color:var(--green-dark);font-size:15px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:48px;padding:0 18px;border-radius:10px;font-size:14px;font-weight:800;transition:.25s;border:1px solid transparent;cursor:pointer}
+.btn-green{color:#fff;background:linear-gradient(120deg,var(--green-deep),var(--green-dark))}
+.btn-green:hover{transform:translateY(-2px)}
+.note{font-size:11px;color:var(--muted);margin-top:14px}
+.btn:disabled{opacity:.75;cursor:default;transform:none}
+.plan-status{margin:-8px 0 18px;font-size:12.5px;font-weight:700;color:var(--green-deep)}
+.btn-cancel{margin-top:10px;color:#b42318;background:#fff;border-color:#fecdca}
+.btn-cancel:hover{background:#fef3f2}
+.history{max-width:520px;margin:22px auto 0;background:#fff;border:1px solid var(--border);border-radius:16px;padding:20px 22px;box-shadow:var(--shadow)}
+.history h4{color:var(--navy);font-size:14px;margin-bottom:10px}
+.history table{width:100%;border-collapse:collapse;font-size:12.5px}
+.history td{padding:9px 4px;border-top:1px solid var(--border)}
+.history td:last-child{text-align:right;text-transform:capitalize}
+</style>
+<script src="js/api.js"></script>
+<script src="js/auth-guard.js"></script>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="goBack()"><i class="bi bi-arrow-left"></i> Back</button>
+</div>
+
+<div class="header">
+  <h1><i class="bi bi-rocket" style="color:var(--green-dark)"></i> Growth Plan</h1>
+  <p>Everything you need to grow with WhatsApp AI</p>
+</div>
+
+<div class="plan">
+  <div class="badge">BEST VALUE</div>
+  <h3>Growth Plan</h3>
+  <div class="price">₹499<span>/month</span></div>
+  <div class="desc">One simple plan. All AI features included.</div>
+  <div class="plan-status" id="planStatus"></div>
+  <ul class="features">
+    <li><i class="bi bi-check-circle"></i> 10,000 WhatsApp messages/month</li>
+    <li><i class="bi bi-check-circle"></i> AI message writer (Telugu, Hindi, English)</li>
+    <li><i class="bi bi-check-circle"></i> AI auto-tagging & lead scoring</li>
+    <li><i class="bi bi-check-circle"></i> Bulk messaging & scheduler</li>
+    <li><i class="bi bi-check-circle"></i> AI analytics & insights</li>
+    <li><i class="bi bi-check-circle"></i> A/B testing</li>
+    <li><i class="bi bi-check-circle"></i> AI voice, image & document assistant</li>
+    <li><i class="bi bi-check-circle"></i> Email & WhatsApp support</li>
+  </ul>
+  <button class="btn btn-green" id="subBtn" onclick="subscribe()"><i class="bi bi-credit-card"></i> Subscribe — ₹499/month</button>
+  <button class="btn btn-cancel" id="cancelBtn" onclick="cancelPlan()" style="display:none"><i class="bi bi-x-circle"></i> Cancel subscription</button>
+  <p class="note" id="planNote">Cancel anytime. Renews monthly.</p>
+</div>
+
+<div class="history" id="history" style="display:none">
+  <h4><i class="bi bi-receipt"></i> Payment history</h4>
+  <table><tbody id="historyRows"></tbody></table>
+</div>
+
+<script>
+function goBack(){
+  window.location.href = (window.currentUser && window.currentUser.plan && window.currentUser.plan.active) ? 'dashboard.html' : 'payment.html';
+}
+
+function formatDate(value){
+  return value ? new Date(value).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+}
+
+function renderPlan(plan){
+  if (!plan) return; // payment backend not added yet
+  const subBtn = document.getElementById('subBtn');
+  const cancelBtn = document.getElementById('cancelBtn');
+  const status = document.getElementById('planStatus');
+  const note = document.getElementById('planNote');
+  if (plan.active) {
+    subBtn.disabled = true;
+    subBtn.innerHTML = '<i class="bi bi-check-circle"></i> Your plan is active';
+    if (plan.cancelAtPeriodEnd) {
+      status.textContent = 'Cancelled · you keep access until ' + formatDate(plan.currentPeriodEnd);
+      cancelBtn.style.display = 'none';
+      note.textContent = 'It will not renew. You can subscribe again after it ends.';
+    } else {
+      status.textContent = 'Active · renews on ' + formatDate(plan.currentPeriodEnd);
+      cancelBtn.style.display = 'inline-flex';
+      note.textContent = 'Renews monthly. Cancelling stops renewal; you keep access until the end of the paid month.';
+    }
+  } else {
+    status.textContent = '';
+    cancelBtn.style.display = 'none';
+  }
+}
+
+async function loadHistory(){
+  try {
+    const res = await api('/billing/payments');
+    if (!res.payments.length) return;
+    const rows = document.getElementById('historyRows');
+    rows.textContent = '';
+    res.payments.forEach((p) => {
+      const tr = document.createElement('tr');
+      [formatDate(p.paidAt || p.createdAt), '₹' + (p.amountPaise / 100).toFixed(0), p.method || '', p.status]
+        .forEach((text) => { const td = document.createElement('td'); td.textContent = text; tr.appendChild(td); });
+      rows.appendChild(tr);
+    });
+    document.getElementById('history').style.display = 'block';
+  } catch (e) {}
+}
+
+document.addEventListener('ventrix:ready', (e) => {
+  renderPlan(e.detail.plan);
+  loadHistory();
+});
+
+function subscribe(){
+  window.location.href = 'payment.html';
+}
+
+async function cancelPlan(){
+  if (!confirm('Cancel your subscription? It will not renew, and you keep access until the end of the paid month.')) return;
+  const btn = document.getElementById('cancelBtn');
+  btn.disabled = true;
+  try {
+    const res = await api('/billing/cancel', { method: 'POST' });
+    window.currentUser.plan = res.plan;
+    renderPlan(res.plan);
+  } catch (err) {
+    alert(err.message);
+  }
+  btn.disabled = false;
+}
+</script>
+</body>
+</html>

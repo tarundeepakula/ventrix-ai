@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Activate Ventrix AI — Secure Checkout</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+:root{
+  --blue:#226db4;--blue-dark:#185a97;--blue-light:#eaf3fb;
+  --green:#25d366;--green-dark:#128c7e;--green-deep:#075e54;--green-soft:#eaf9ef;
+  --ink:#1b2a3a;--text:#4a5a6a;--muted:#68798a;
+  --bg:#f5f7fa;--white:#fff;--border:#dfe5ec;--shadow:0 8px 24px rgba(27,42,58,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{max-width:100%;overflow-x:hidden}
+body{background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;line-height:1.7}
+a{text-decoration:none;color:inherit}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+@keyframes popIn{0%{opacity:0;transform:translateY(16px) scale(.95)}100%{opacity:1;transform:none}}
+@keyframes pulseRing{0%{box-shadow:0 0 0 0 rgba(37,211,102,.35)}70%{box-shadow:0 0 0 18px rgba(37,211,102,0)}100%{box-shadow:0 0 0 0 rgba(37,211,102,0)}}
+@keyframes gradientMove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+.page{display:grid;grid-template-columns:1fr;min-height:100vh}
+
+/* LEFT PANEL */
+.checkout-side{
+  position:relative;overflow:hidden;display:none;
+  background:linear-gradient(150deg,#075e54,#128c7e 55%,#25d366);
+  color:#fff;padding:55px 40px;align-items:center;justify-content:center
+}
+.checkout-side::before{content:"";position:absolute;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,.1);filter:blur(60px);top:-80px;right:-60px;animation:float 8s ease-in-out infinite}
+.checkout-side::after{content:"";position:absolute;width:240px;height:240px;border-radius:50%;background:rgba(255,255,255,.08);filter:blur(50px);bottom:-70px;left:-50px;animation:float 10s ease-in-out infinite reverse}
+
+.checkout-inner{position:relative;z-index:2;max-width:430px;width:100%}
+.checkout-inner h2{color:#fff;font-size:clamp(24px,3vw,32px);line-height:1.25;margin-bottom:14px}
+.checkout-inner p{color:rgba(255,255,255,.85);font-size:14.5px;margin-bottom:30px}
+
+.order-box{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:26px;backdrop-filter:blur(8px);animation:popIn .7s ease both}
+.order-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.order-top strong{font-size:16px}
+.order-top span{background:#fff;color:var(--green-deep);padding:6px 12px;border-radius:99px;font-size:11px;font-weight:800}
+.amount{font-size:46px;font-weight:800;margin-bottom:4px}
+.amount small{font-size:14px;opacity:.85;font-weight:500}
+.includes{margin-top:20px}
+.includes div{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px dashed rgba(255,255,255,.25);font-size:13.5px}
+.includes i{color:#fff}
+
+.float-badge{position:absolute;display:flex;gap:10px;align-items:center;background:#fff;color:var(--ink);padding:12px 16px;border-radius:14px;box-shadow:0 18px 40px rgba(0,0,0,.18);font-size:12.5px;font-weight:700;animation:float 5s ease-in-out infinite}
+.float-badge i{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;color:#fff;font-size:14px}
+.fb1{top:12%;right:6%}.fb1 i{background:var(--blue)}
+.fb2{bottom:14%;left:5%;animation-delay:1s}.fb2 i{background:var(--green-dark)}
+
+/* RIGHT FORM */
+.form-side{display:grid;place-items:center;padding:40px 18px;background:var(--bg)}
+.checkout-card{width:100%;max-width:470px;background:#fff;border:1px solid var(--border);border-radius:16px;padding:36px;box-shadow:var(--shadow);animation:fadeUp .6s ease}
+.brand{display:flex;align-items:center;gap:11px;margin-bottom:22px}
+.brand img{display:block;height:40px;width:auto;max-width:100%}
+.card-top{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:22px}
+.card-top .brand,.card-top .back-btn{margin-bottom:0}
+.card-top .back-btn{flex-shrink:0}
+
+.back-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 16px;border-radius:10px;
+  background:var(--bg);color:var(--ink);
+  font-size:13px;font-weight:700;
+  border:1px solid var(--border);
+  transition:.2s;margin-bottom:22px
+}
+.back-btn:hover{
+  background:var(--blue-light);
+  color:var(--blue);
+  transform:translateX(-3px);
+}
+
+h1{color:var(--ink);font-size:25px;margin-bottom:8px}
+.sub{color:var(--muted);font-size:14px;margin-bottom:22px}
+
+.btn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;min-height:52px;margin-top:24px;border-radius:10px;color:#fff;font-size:15px;font-weight:700;border:0;cursor:pointer;transition:.3s;font-family:inherit;
+  background:linear-gradient(120deg,var(--green-deep),var(--green-dark),var(--green));background-size:220% 220%;animation:gradientMove 6s ease infinite}
+.btn:hover{transform:translateY(-3px)}
+.btn:disabled{opacity:.7;cursor:not-allowed;transform:none}
+.small{text-align:center;color:var(--muted);font-size:13px;margin-top:18px}
+.small a{color:var(--blue);font-weight:700}
+
+/* Payment method tabs */
+.methods{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:6px}
+.method{display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 12px;border:2px solid var(--border);border-radius:14px;cursor:pointer;transition:.25s;background:#fff;text-align:center;font-family:inherit}
+.method i{font-size:22px;color:var(--muted)}
+.method span{font-size:13px;font-weight:700;color:var(--ink)}
+.method.active{border-color:var(--green);background:var(--green-soft)}
+.method.active i{color:var(--green-dark)}
+.method:hover{transform:translateY(-2px)}
+.pane{display:none;margin-top:16px;animation:popIn .35s ease}
+.pane.show{display:block}
+
+/* UPI QR */
+.upi-box{text-align:center;background:var(--green-soft);border:1px solid #bbeacc;border-radius:16px;padding:22px}
+.upi-box .scan{color:var(--green-deep);font-weight:700;font-size:14px}
+.qr{width:184px;height:184px;margin:14px auto 10px;background:#fff;border:1px solid var(--border);border-radius:14px;display:grid;place-items:center;padding:12px}
+.qr img,.qr canvas{display:block;width:160px!important;height:160px!important}
+.qr .qr-fallback{font-size:12px;color:var(--muted)}
+.upi-apps{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:6px}
+.upi-apps span{font-size:11.5px;font-weight:700;color:var(--ink);background:#fff;border:1px solid var(--border);border-radius:99px;padding:5px 11px}
+.timer{font-size:12px;color:var(--muted);margin-top:10px}
+
+/* Card form */
+label{display:block;font-size:13px;font-weight:600;color:var(--ink);margin:14px 0 6px}
+.card-form input{width:100%;padding:13px 15px;border:1px solid var(--border);border-radius:9px;font-size:14px;outline:none;transition:.2s;font-family:inherit}
+.card-form input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(34,109,180,.12)}
+.card-form input.bad{border-color:#f04438}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.card-input{position:relative}
+.card-input i{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:18px}
+
+.demo-note{display:flex;gap:8px;align-items:flex-start;margin-top:14px;padding:10px 12px;border-radius:10px;background:#fffaeb;border:1px solid #fedf89;color:#93370d;font-size:11.5px;line-height:1.5}
+
+/* Status messages */
+.status-box{display:none;margin-top:16px;padding:12px 14px;border-radius:10px;font-size:13px;font-weight:600;line-height:1.5}
+.status-box.error{background:#fef3f2;border:1px solid #fecdca;color:#b42318}
+.status-box.ok{background:var(--green-soft);border:1px solid #bbeacc;color:var(--green-deep)}
+
+@media(min-width:980px){
+  .page{grid-template-columns:1.05fr 1fr}
+  .checkout-side{display:flex}
+}
+@media(max-width:979px){
+  .form-side{padding:50px 18px}
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ORDER SUMMARY -->
+  <div class="checkout-side">
+    <div class="checkout-inner">
+      <h2>Activate your AI assistant and grow faster on WhatsApp</h2>
+      <p>Your subscription includes everything you need to reply faster, follow up automatically, and manage customer enquiries in one place.</p>
+
+      <div class="order-box">
+        <div class="order-top">
+          <strong>Ventrix AI Business Plan</strong>
+          <span>Recommended</span>
+        </div>
+        <div class="amount">₹499 <small>/ month</small></div>
+        <div class="includes">
+          <div><i class="fas fa-check-circle"></i> AI assistant for customer chats</div>
+          <div><i class="fas fa-check-circle"></i> Bulk WhatsApp campaigns</div>
+          <div><i class="fas fa-check-circle"></i> Automated follow-up messages</div>
+          <div><i class="fas fa-check-circle"></i> Customer enquiry management</div>
+          <div><i class="fas fa-check-circle"></i> Campaign performance reports</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="float-badge fb1">
+      <i class="fas fa-bolt"></i> Activate in Minutes
+    </div>
+
+    <div class="float-badge fb2">
+      <i class="fas fa-shield-halved"></i> 100% Secure Checkout
+    </div>
+  </div>
+
+  <!-- PAYMENT FORM -->
+  <div class="form-side">
+    <div class="checkout-card">
+      <div class="card-top">
+        <a class="brand" href="index.html"><img src="logo.png" alt="Ventrix AI"></a>
+        <a href="signup.html" class="back-btn">
+          <i class="fas fa-arrow-left"></i> Back
+        </a>
+      </div>
+
+      <h1>Activate your plan</h1>
+      <p class="sub">₹499 per month, renews automatically. Cancel anytime from your Plan page.</p>
+
+      <div class="methods">
+        <button type="button" class="method active" id="upiTab" onclick="selectMethod('upi')">
+          <i class="fas fa-qrcode"></i>
+          <span>Pay via UPI</span>
+        </button>
+        <button type="button" class="method" id="cardTab" onclick="selectMethod('card')">
+          <i class="fas fa-credit-card"></i>
+          <span>Pay via Card</span>
+        </button>
+      </div>
+
+      <!-- UPI: QR code -->
+      <div class="pane show" id="upiPane">
+        <div class="upi-box">
+          <p class="scan"><i class="fas fa-mobile-screen"></i> Scan with any UPI app to pay ₹499</p>
+          <div class="qr" id="qrCode"></div>
+          <div class="upi-apps"><span>Google Pay</span><span>PhonePe</span><span>Paytm</span><span>BHIM</span></div>
+          <p class="timer" id="qrTimer">QR valid for 05:00</p>
+        </div>
+        <button class="btn" type="button" id="upiPayBtn" onclick="confirmUpi()">
+          <i class="fas fa-circle-check"></i> I've Paid — Activate My Plan
+        </button>
+      </div>
+
+      <!-- Card: card details -->
+      <form class="pane card-form" id="cardPane" novalidate>
+        <label for="cardName">Cardholder name</label>
+        <input type="text" id="cardName" placeholder="Name printed on card" autocomplete="cc-name">
+
+        <label for="cardNumber">Card number</label>
+        <div class="card-input">
+          <input type="text" id="cardNumber" inputmode="numeric" placeholder="1234 5678 9012 3456" maxlength="23" autocomplete="cc-number">
+          <i class="fas fa-credit-card" id="cardBrand"></i>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="cardExpiry">Valid till</label>
+            <input type="text" id="cardExpiry" inputmode="numeric" placeholder="MM / YY" maxlength="7" autocomplete="cc-exp">
+          </div>
+          <div>
+            <label for="cardCvv">CVV</label>
+            <input type="password" id="cardCvv" inputmode="numeric" placeholder="•••" maxlength="4" autocomplete="cc-csc">
+          </div>
+        </div>
+
+        <button class="btn" type="submit" id="cardPayBtn">
+          <i class="fas fa-lock"></i> Pay ₹499 &amp; Activate
+        </button>
+      </form>
+
+      <div class="status-box" id="payStatus"></div>
+
+      <div class="demo-note">
+        <i class="fas fa-triangle-exclamation" style="margin-top:2px"></i>
+        <span>Demo checkout: no money is taken and card details are not saved or sent anywhere. Real payments will open Razorpay's secure window.</span>
+      </div>
+
+      <p class="small">
+        Already paid? <a href="login.html">Login</a>
+      </p>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+// ===== Payment (frontend demo, until Razorpay is connected to the backend) =====
+const payStatus = document.getElementById('payStatus');
+
+function setStatus(type, message){
+  payStatus.className = 'status-box ' + type;
+  payStatus.textContent = message;
+  payStatus.style.display = message ? 'block' : 'none';
+}
+
+// ---------- Switch between UPI and Card ----------
+function selectMethod(type){
+  const isUpi = type === 'upi';
+  document.getElementById('upiTab').classList.toggle('active', isUpi);
+  document.getElementById('cardTab').classList.toggle('active', !isUpi);
+  document.getElementById('upiPane').classList.toggle('show', isUpi);
+  document.getElementById('cardPane').classList.toggle('show', !isUpi);
+  setStatus('', '');
+  if (isUpi) startQrTimer();
+}
+
+// ---------- UPI QR ----------
+// Demo QR: scanning it shows a message only, it does not ask for money.
+// When Razorpay is connected, the real payment QR comes from Razorpay.
+const DEMO_QR_TEXT = 'Ventrix AI demo payment of Rs 499. This is a test QR code - no money will be taken.';
+
+function drawQr(){
+  const box = document.getElementById('qrCode');
+  box.textContent = '';
+  if (typeof QRCode === 'undefined') {
+    box.innerHTML = '<span class="qr-fallback">QR code could not load.<br>Check your internet connection.</span>';
+    return;
+  }
+  new QRCode(box, { text: DEMO_QR_TEXT, width: 160, height: 160, colorDark: '#075e54', colorLight: '#ffffff' });
+}
+
+let qrSeconds = 300, qrInterval = null;
+function startQrTimer(){
+  clearInterval(qrInterval);
+  qrSeconds = 300;
+  const timer = document.getElementById('qrTimer');
+  const tick = () => {
+    const m = String(Math.floor(qrSeconds / 60)).padStart(2, '0');
+    const s = String(qrSeconds % 60).padStart(2, '0');
+    timer.textContent = qrSeconds > 0 ? 'QR valid for ' + m + ':' + s : 'QR expired. Switch tabs to get a new one.';
+    if (qrSeconds-- <= 0) clearInterval(qrInterval);
+  };
+  tick();
+  qrInterval = setInterval(tick, 1000);
+}
+
+// ---------- Success (both methods end here) ----------
+function finishPayment(btn, method){
+  const label = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + (method === 'upi' ? 'Confirming payment…' : 'Processing payment…');
+  setStatus('', '');
+  setTimeout(() => {
+    try { localStorage.setItem('ventrix_paid', 'true'); } catch (err) {}
+    btn.innerHTML = label;
+    setStatus('ok', 'Payment successful! Your Business Plan is active. Taking you to the next step…');
+    setTimeout(() => { window.location.href = 'connect-whatsapp.html'; }, 1500);
+  }, 1300);
+}
+
+function confirmUpi(){
+  finishPayment(document.getElementById('upiPayBtn'), 'upi');
+}
+
+// ---------- Card form: formatting ----------
+const cardNumber = document.getElementById('cardNumber');
+const cardExpiry = document.getElementById('cardExpiry');
+const cardCvv = document.getElementById('cardCvv');
+
+cardNumber.addEventListener('input', () => {
+  const digits = cardNumber.value.replace(/\D/g, '').slice(0, 19);
+  cardNumber.value = digits.replace(/(.{4})/g, '$1 ').trim();
+  const brand = document.getElementById('cardBrand');
+  brand.className = /^4/.test(digits) ? 'fab fa-cc-visa'
+    : /^(5[1-5]|2[2-7])/.test(digits) ? 'fab fa-cc-mastercard'
+    : /^3[47]/.test(digits) ? 'fab fa-cc-amex'
+    : 'fas fa-credit-card';
+});
+
+cardExpiry.addEventListener('input', (e) => {
+  let digits = cardExpiry.value.replace(/\D/g, '').slice(0, 4);
+  if (digits.length === 1 && Number(digits) > 1) digits = '0' + digits; // "4" -> "04"
+  cardExpiry.value = digits.length > 2 ? digits.slice(0, 2) + ' / ' + digits.slice(2)
+    : (digits.length === 2 && e.inputType !== 'deleteContentBackward' ? digits + ' / ' : digits);
+});
+
+cardCvv.addEventListener('input', () => {
+  cardCvv.value = cardCvv.value.replace(/\D/g, '').slice(0, 4);
+});
+
+// ---------- Card form: checks ----------
+// Luhn check: the standard test every real card number passes
+function validCardNumber(digits){
+  if (digits.length < 13 || digits.length > 19) return false;
+  let sum = 0;
+  for (let i = 0; i < digits.length; i++) {
+    let d = Number(digits[digits.length - 1 - i]);
+    if (i % 2 === 1) { d *= 2; if (d > 9) d -= 9; }
+    sum += d;
+  }
+  return sum % 10 === 0;
+}
+
+function validExpiry(value){
+  const m = value.match(/^(\d{2}) \/ (\d{2})$/);
+  if (!m) return false;
+  const month = Number(m[1]), year = 2000 + Number(m[2]);
+  if (month < 1 || month > 12) return false;
+  const now = new Date();
+  return year > now.getFullYear() || (year === now.getFullYear() && month >= now.getMonth() + 1);
+}
+
+function markBad(input, bad){ input.classList.toggle('bad', bad); }
+
+// Remove the red border as soon as the person starts fixing a field
+['cardName','cardNumber','cardExpiry','cardCvv'].forEach(id => {
+  document.getElementById(id).addEventListener('input', e => markBad(e.target, false));
+});
+
+document.getElementById('cardPane').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const name = document.getElementById('cardName');
+  const digits = cardNumber.value.replace(/\D/g, '');
+  const checks = [
+    [name, name.value.trim().length >= 2, 'Enter the name printed on the card.'],
+    [cardNumber, validCardNumber(digits), 'Enter a valid card number.'],
+    [cardExpiry, validExpiry(cardExpiry.value), 'Enter a valid expiry date (MM / YY) that is not in the past.'],
+    [cardCvv, /^\d{3,4}$/.test(cardCvv.value), 'Enter the 3 or 4 digit CVV from the back of the card.'],
+  ];
+  checks.forEach(([input, ok]) => markBad(input, !ok));
+  const firstProblem = checks.find(([, ok]) => !ok);
+  if (firstProblem) {
+    setStatus('error', firstProblem[2]);
+    firstProblem[0].focus();
+    return;
+  }
+  finishPayment(document.getElementById('cardPayBtn'), 'card');
+  // Clear card details from the page straight away
+  cardNumber.value = ''; cardCvv.value = ''; cardExpiry.value = '';
+});
+
+// Start on UPI
+drawQr();
+startQrTimer();
+</script>
+
+</body>
+</html>

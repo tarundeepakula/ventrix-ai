@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Account — Ventrix AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+:root{
+  --blue:#226db4;--blue-dark:#185a97;--blue-light:#eaf3fb;
+  --green:#25d366;--green-dark:#128c7e;--green-deep:#075e54;
+  --ink:#1b2a3a;--text:#4a5a6a;--muted:#68798a;
+  --bg:#f5f7fa;--white:#fff;--border:#dfe5ec;--shadow:0 8px 24px rgba(27,42,58,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box}     
+html,body{max-width:100%;overflow-x:hidden}
+body{background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;line-height:1.7}
+a{text-decoration:none;color:inherit}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+@keyframes popIn{0%{opacity:0;transform:translateY(16px) scale(.95)}100%{opacity:1;transform:none}}
+@keyframes typing{0%{opacity:.25}50%{opacity:1}100%{opacity:.25}}
+@keyframes pulseRing{0%{box-shadow:0 0 0 0 rgba(37,211,102,.35)}70%{box-shadow:0 0 0 18px rgba(37,211,102,0)}100%{box-shadow:0 0 0 0 rgba(37,211,102,0)}}
+
+.page{display:grid;grid-template-columns:1fr;min-height:100vh}
+
+/* LEFT VISUAL */
+.visual{
+  position:relative;overflow:hidden;display:none;
+  background:linear-gradient(150deg,#075e54,#128c7e 55%,#25d366);
+  color:#fff;padding:55px 40px;align-items:center;justify-content:center
+}
+.visual::before{content:"";position:absolute;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,.1);filter:blur(60px);top:-80px;right:-60px;animation:float 8s ease-in-out infinite}
+.visual::after{content:"";position:absolute;width:240px;height:240px;border-radius:50%;background:rgba(255,255,255,.08);filter:blur(50px);bottom:-70px;left:-50px;animation:float 10s ease-in-out infinite reverse}
+
+.visual-inner{position:relative;z-index:2;max-width:430px;width:100%}
+.visual h2{color:#fff;font-size:clamp(24px,3vw,32px);line-height:1.25;margin-bottom:14px}
+.visual p{color:rgba(255,255,255,.85);font-size:14.5px;margin-bottom:30px}
+
+.phone{
+  background:#fff;border-radius:26px;padding:18px;box-shadow:0 30px 70px rgba(0,0,0,.25);
+  animation:float 6s ease-in-out infinite
+}
+.phone-header{display:flex;align-items:center;gap:11px;background:var(--green-deep);color:#fff;padding:13px 15px;border-radius:16px;margin-bottom:14px}
+.phone-avatar{width:36px;height:36px;border-radius:50%;background:#fff;color:var(--green-deep);display:grid;place-items:center;font-weight:800}
+.phone-header strong{display:block;font-size:13px}
+.phone-header span{font-size:10px;opacity:.85}
+.chat{display:flex;flex-direction:column;gap:11px}
+.msg{max-width:85%;padding:11px 14px;border-radius:15px;font-size:12.5px;animation:popIn .6s ease both}
+.in{background:#f1f5f9;color:var(--text);align-self:flex-start;border-bottom-left-radius:5px}
+.out{background:#dcf8c6;color:#075e54;align-self:flex-end;border-bottom-right-radius:5px}
+.typing{display:flex;gap:5px;align-self:flex-start;background:#f1f5f9;padding:12px 15px;border-radius:15px}
+.typing span{width:7px;height:7px;border-radius:50%;background:var(--muted);animation:typing 1s infinite}
+.typing span:nth-child(2){animation-delay:.15s}
+.typing span:nth-child(3){animation-delay:.3s}
+
+.float-badge{
+  position:absolute;display:flex;gap:10px;align-items:center;background:#fff;color:var(--ink);
+  padding:12px 16px;border-radius:14px;box-shadow:0 18px 40px rgba(0,0,0,.18);font-size:12.5px;font-weight:700;
+  animation:float 5s ease-in-out infinite
+}
+.float-badge i{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;color:#fff;font-size:14px}
+.fb1{top:12%;right:6%}.fb1 i{background:var(--blue)}
+.fb2{bottom:14%;left:5%;animation-delay:1s}.fb2 i{background:var(--green-dark)}
+.fb3{top:46%;right:-14px;animation-delay:2s}.fb3 i{background:#f79009}
+
+/* RIGHT FORM */
+.form-side{display:grid;place-items:center;padding:40px 18px;background:var(--bg)}
+.signup-card{width:100%;max-width:460px;background:#fff;border:1px solid var(--border);border-radius:16px;padding:36px;box-shadow:var(--shadow);animation:fadeUp .6s ease}
+.brand{display:flex;align-items:center;gap:11px;margin-bottom:22px}
+.logo-mark{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,var(--green-deep),var(--green));font-size:19px;animation:pulseRing 2.5s infinite}
+.brand strong{display:block;color:var(--ink);font-size:16px}
+.brand span{display:block;color:var(--muted);font-size:10px}
+.brand img{display:block;height:40px;width:auto;max-width:90%}
+
+.back-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 16px;border-radius:10px;
+  background:var(--bg);color:var(--ink);
+  font-size:13px;font-weight:700;
+  border:1px solid var(--border);
+  transition:.2s;margin-bottom:22px
+}
+.back-btn:hover{
+  background:var(--blue-light);
+  color:var(--blue);
+  transform:translateX(-3px);
+}
+
+h1{color:var(--ink);font-size:25px;margin-bottom:8px}
+.sub{color:var(--muted);font-size:14px;margin-bottom:22px}
+label{display:block;font-size:13px;font-weight:600;color:var(--ink);margin:15px 0 7px}
+.input-box{position:relative}
+input{width:100%;padding:13px 46px 13px 15px;border:1px solid var(--border);border-radius:8px;font-size:14px;outline:none;transition:.2s}
+input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(34,109,180,.12)}
+.eye-btn{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:36px;height:36px;border:0;background:transparent;color:var(--muted);font-size:15px;cursor:pointer;border-radius:8px}
+.eye-btn:hover{color:var(--blue);background:var(--blue-light)}
+.btn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;min-height:50px;margin-top:24px;border-radius:10px;background:var(--blue);color:#fff;font-size:15px;font-weight:700;border:0;cursor:pointer;transition:.2s}
+.btn:hover{background:var(--blue-dark)}
+.small{text-align:center;color:var(--muted);font-size:13px;margin-top:18px}
+.small a{color:var(--blue);font-weight:700}
+.note{display:flex;gap:9px;align-items:center;background:var(--blue-light);border:1px solid #cfe2f3;color:var(--blue-dark);padding:12px 14px;border-radius:10px;font-size:12.5px;margin-top:20px}
+.note i{color:var(--blue)}
+
+.error-box{display:none;margin-top:14px;background:#fef3f2;border:1px solid #fecdca;color:#b42318;padding:12px 14px;border-radius:10px;font-size:12.5px;font-weight:600}
+
+/* RESPONSIVE */
+@media(min-width:980px){
+  .page{grid-template-columns:1.05fr 1fr}
+  .visual{display:flex}
+}
+@media(max-width:979px){
+  .form-side{padding:50px 18px}
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ANIMATED VISUAL SIDE -->
+  <div class="visual">
+    <div class="visual-inner">
+      <h2>Manage WhatsApp customers automatically with Ventrix AI</h2>
+      <p>Reply instantly, follow up automatically, and turn more enquiries into paying customers.</p>
+
+      <div class="phone">
+        <div class="phone-header">
+          <div class="phone-avatar">V</div>
+          <div>
+            <strong>Ventrix AI Assistant</strong>
+            <span>Online · replying instantly</span>
+          </div>
+        </div>
+
+        <div class="chat">
+          <div class="msg in" style="animation-delay:.2s">Hi! Do you provide home delivery?</div>
+          <div class="msg out" style="animation-delay:.9s">Yes! We deliver across the city. What would you like to order?</div>
+          <div class="msg in" style="animation-delay:1.7s">What is the price?</div>
+          <div class="msg out" style="animation-delay:2.4s">Our complete plan is ₹499 per month.</div>
+          <div class="typing" style="animation-delay:3.1s">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="float-badge fb1">
+      <i class="fas fa-paper-plane"></i> Campaign Sent
+    </div>
+
+    <div class="float-badge fb2">
+      <i class="fas fa-bullseye"></i> New Lead Captured
+    </div>
+
+    <div class="float-badge fb3">
+      <i class="fas fa-chart-line"></i> +32% Replies
+    </div>
+  </div>
+
+  <!-- SIGNUP FORM -->
+  <div class="form-side">
+    <div class="signup-card">
+      <a class="brand" href="index.html"><img src="logo.png" alt="Ventrix AI"></a>
+
+      <a href="index.html" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Back
+      </a>
+
+      <h1>Create your account</h1>
+      <p class="sub">Start managing your WhatsApp customers, campaigns, and leads with AI.</p>
+
+      <form id="signupForm">
+        <label for="suName">Full name</label>
+        <input type="text" id="suName" placeholder="Enter your full name" autocomplete="name" required>
+
+        <label for="suBusiness">Business name</label>
+        <input type="text" id="suBusiness" placeholder="Enter your business name" autocomplete="organization" required>
+
+        <label for="suEmail">Email address</label>
+        <input type="email" id="suEmail" placeholder="you@example.com" autocomplete="email" required>
+
+        <label for="suPhone">WhatsApp number</label>
+        <input type="tel" id="suPhone" placeholder="+91 98765 43210" autocomplete="tel" required>
+
+        <label for="password">Password</label>
+        <div class="input-box">
+          <input type="password" id="password" placeholder="At least 8 characters" autocomplete="new-password" minlength="8" required>
+          <button type="button" class="eye-btn" onclick="togglePassword()">
+            <i class="fas fa-eye" id="eyeIcon"></i>
+          </button>
+        </div>
+
+        <div class="error-box" id="signupError"></div>
+
+        <button class="btn" type="submit" id="signupBtn">
+          <i class="fas fa-arrow-right"></i> Continue to Payment
+        </button>
+      </form>
+
+      <div class="note">
+        <i class="fas fa-lock"></i>
+        Growth Plan: ₹499/month · Full access · Cancel anytime
+      </div>
+
+      <p class="small">
+        Already have an account? <a href="login.html">Login</a>
+      </p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function togglePassword(){
+  const password=document.getElementById('password');
+  const icon=document.getElementById('eyeIcon');
+  if(password.type==='password'){
+    password.type='text';
+    icon.classList.remove('fa-eye');
+    icon.classList.add('fa-eye-slash');
+  }else{
+    password.type='password';
+    icon.classList.remove('fa-eye-slash');
+    icon.classList.add('fa-eye');
+  }
+}
+
+// ===== Sign up (frontend only, until the backend is connected) =====
+document.getElementById('signupForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const btn = document.getElementById('signupBtn');
+  const errorBox = document.getElementById('signupError');
+
+  const fullName = document.getElementById('suName').value.trim();
+  const businessName = document.getElementById('suBusiness').value.trim();
+  const email = document.getElementById('suEmail').value.trim();
+  const phone = document.getElementById('suPhone').value.trim();
+  const password = document.getElementById('password').value;
+
+  function fail(message){
+    errorBox.textContent = message;
+    errorBox.style.display = 'block';
+  }
+
+  if (fullName.length < 2) return fail('Please enter your full name.');
+  if (businessName.length < 2) return fail('Please enter your business name.');
+  if (!/^\S+@\S+\.\S+$/.test(email)) return fail('Please enter a valid email address.');
+  if (phone.replace(/\D/g, '').length < 10) return fail('Please enter a valid WhatsApp number, e.g. +91 98765 43210.');
+  if (password.length < 8) return fail('Password must be at least 8 characters.');
+
+  errorBox.style.display = 'none';
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating your account…';
+
+  // Remember the new user, so the dashboard profile menu shows their name
+  try {
+    localStorage.setItem('selectedAccount', JSON.stringify({
+      name: fullName, business: businessName, email: email, phone: phone
+    }));
+  } catch (err) {}
+
+  setTimeout(() => { window.location.href = 'payment.html'; }, 700);
+});
+</script>
+
+</body>
+</html>
