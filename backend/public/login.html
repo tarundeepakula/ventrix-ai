@@ -188,8 +188,8 @@ input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(34,109,180,.12)}
 
 
         <form id="loginForm">
-          <label for="loginEmail">Email</label>
-          <input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email" required>
+          <label for="loginEmail">Email or mobile number</label>
+          <input type="text" id="loginEmail" name="login" placeholder="you@example.com or 98765 43210" autocomplete="username" autocapitalize="none" spellcheck="false" required>
 
 
           <label for="password">Password</label>
@@ -227,7 +227,7 @@ input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(34,109,180,.12)}
 
 
         <form onsubmit="sendResetLink(event)">
-          <label>Email</label>
+          <label for="resetEmail">Email</label>
           <input type="email" id="resetEmail" placeholder="you@example.com" required>
 
 
@@ -240,7 +240,7 @@ input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(34,109,180,.12)}
 
 
         <div class="success-box" id="resetSuccess">
-          <i class="fas fa-circle-check"></i> Reset link sent! Check your email inbox.
+          <i class="fas fa-circle-check"></i> <span id="resetSuccessText">If an account exists for that email, a reset link has been sent. Check your inbox.</span>
         </div>
 
 
@@ -257,25 +257,24 @@ input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(34,109,180,.12)}
 </div>
 
 
+<script src="js/api.js"></script>
 <script>
 function togglePassword(){
   const password=document.getElementById('password');
   const icon=document.getElementById('eyeIcon');
-  if(password.type==='password'){
-    password.type='text';
-    icon.classList.remove('fa-eye');
-    icon.classList.add('fa-eye-slash');
-  }else{
-    password.type='password';
-    icon.classList.remove('fa-eye-slash');
-    icon.classList.add('fa-eye');
-  }
+  const show=password.type==='password';
+  password.type=show?'text':'password';
+  icon.classList.toggle('fa-eye',!show);
+  icon.classList.toggle('fa-eye-slash',show);
 }
 
 function showForgot(){
   document.getElementById('loginSection').style.display='none';
   document.getElementById('forgotSection').style.display='block';
   document.getElementById('resetSuccess').style.display='none';
+  showError('resetError','');
+  const typed=document.getElementById('loginEmail').value.trim();
+  if(typed.includes('@')) document.getElementById('resetEmail').value=typed;
 }
 
 function showLogin(){
@@ -284,48 +283,83 @@ function showLogin(){
 }
 
 function showError(id, message){
-  const box = document.getElementById(id);
-  box.textContent = message;
-  box.style.display = message ? 'block' : 'none';
+  const box=document.getElementById(id);
+  box.textContent=message;
+  box.style.display=message?'block':'none';
 }
 
-// ===== Login (frontend only, until the backend is connected) =====
-document.getElementById('loginForm').addEventListener('submit', (e) => {
+function setButton(btn, busy, idleIcon, idleText, busyText){
+  btn.disabled=busy;
+  btn.textContent='';
+  const icon=document.createElement('i');
+  icon.className=busy?'fas fa-spinner fa-spin':idleIcon;
+  btn.append(icon,' '+(busy?busyText:idleText));
+}
+
+// Where to go after login. Only a page on this site is allowed (no outside links).
+function nextPage(){
+  const next=new URLSearchParams(window.location.search).get('next')||'';
+  return /^[a-z0-9-]+\.html$/i.test(next) && next!=='login.html' && next!=='signup.html' ? next : 'dashboard.html';
+}
+
+// Signup steps: an unpaid account goes to payment, a paid but unverified one
+// to the WhatsApp code, and an active one to the dashboard (or the page they asked for).
+function pageFor(me){
+  const step=me && me.account && me.account.nextStep;
+  if(step==='payment') return 'payment.html';
+  if(step==='verify-phone') return 'verify-phone.html';
+  return nextPage();
+}
+
+// Already logged in? Skip the form.
+api('/auth/me').then((me)=>window.location.replace(pageFor(me))).catch(()=>{});
+
+// ===== Login: checked by the server, which sets an HTTP-only session cookie =====
+document.getElementById('loginForm').addEventListener('submit', async (e)=>{
   e.preventDefault();
-  const email = document.getElementById('loginEmail').value.trim();
-  const password = document.getElementById('password').value;
+  const login=document.getElementById('loginEmail').value.trim();
+  const password=document.getElementById('password').value;
 
-  if (!email || !password) {
-    showError('loginError', 'Please enter your email and password.');
-    return;
-  }
-  if (password.length < 6) {
-    showError('loginError', 'Password must be at least 6 characters.');
+  if(!login || !password){
+    showError('loginError','Please enter your email or mobile number and your password.');
     return;
   }
 
-  showError('loginError', '');
-  const btn = document.getElementById('loginBtn');
-  btn.disabled = true;
-  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in…';
+  showError('loginError','');
+  const btn=document.getElementById('loginBtn');
+  setButton(btn,true,'fas fa-right-to-bracket','Login','Logging in…');
 
-  // Remember who logged in, so the dashboard profile menu shows their name
-  const name = email.split('@')[0].replace(/[._-]+/g, ' ');
-  try {
-    localStorage.setItem('selectedAccount', JSON.stringify({ name: name, email: email }));
-  } catch (err) {}
-
-  setTimeout(() => { window.location.href = 'dashboard.html'; }, 600);
+  try{
+    const me=await api('/auth/login',{method:'POST',body:{login,password}});
+    window.location.replace(pageFor(me));
+  }catch(err){
+    let message=err.message;
+    if(!err.status) message='Cannot reach the server. Check your internet connection and try again.';
+    showError('loginError',message);
+    setButton(btn,false,'fas fa-right-to-bracket','Login','Logging in…');
+    document.getElementById('password').select();
+  }
 });
 
-// ===== Forgot password (frontend only) =====
-function sendResetLink(e){
+// ===== Forgot password: the server emails a one-time reset link =====
+async function sendResetLink(e){
   e.preventDefault();
-  const email = document.getElementById('resetEmail').value.trim();
-  if (!email) return;
-  showError('resetError', '');
-  document.getElementById('resetSuccess').style.display = 'block';
-  document.getElementById('resetEmail').value = '';
+  const email=document.getElementById('resetEmail').value.trim();
+  if(!email) return;
+  showError('resetError','');
+  document.getElementById('resetSuccess').style.display='none';
+  const btn=document.getElementById('resetBtn');
+  setButton(btn,true,'fas fa-paper-plane','Send Reset Link','Sending…');
+  try{
+    const data=await api('/auth/forgot-password',{method:'POST',body:{email}});
+    document.getElementById('resetSuccessText').textContent=data.message;
+    document.getElementById('resetSuccess').style.display='block';
+    document.getElementById('resetEmail').value='';
+  }catch(err){
+    showError('resetError',err.status?err.message:'Cannot reach the server. Please try again.');
+  }finally{
+    setButton(btn,false,'fas fa-paper-plane','Send Reset Link','Sending…');
+  }
 }
 </script>
 

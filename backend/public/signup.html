@@ -213,56 +213,66 @@ input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(34,109,180,.12)}
 
 </div>
 
+<script src="js/api.js"></script>
 <script>
 function togglePassword(){
   const password=document.getElementById('password');
   const icon=document.getElementById('eyeIcon');
-  if(password.type==='password'){
-    password.type='text';
-    icon.classList.remove('fa-eye');
-    icon.classList.add('fa-eye-slash');
-  }else{
-    password.type='password';
-    icon.classList.remove('fa-eye-slash');
-    icon.classList.add('fa-eye');
-  }
+  const show=password.type==='password';
+  password.type=show?'text':'password';
+  icon.classList.toggle('fa-eye',!show);
+  icon.classList.toggle('fa-eye-slash',show);
 }
 
-// ===== Sign up (frontend only, until the backend is connected) =====
-document.getElementById('signupForm').addEventListener('submit', (e) => {
-  e.preventDefault();
-  const btn = document.getElementById('signupBtn');
-  const errorBox = document.getElementById('signupError');
+const STEP_PAGES={payment:'payment.html','verify-phone':'verify-phone.html',dashboard:'dashboard.html'};
 
-  const fullName = document.getElementById('suName').value.trim();
-  const businessName = document.getElementById('suBusiness').value.trim();
-  const email = document.getElementById('suEmail').value.trim();
-  const phone = document.getElementById('suPhone').value.trim();
-  const password = document.getElementById('password').value;
+// Already signed up and logged in? Continue where they left off.
+api('/auth/me').then((me)=>{
+  window.location.replace(STEP_PAGES[me.account&&me.account.nextStep]||'dashboard.html');
+}).catch(()=>{});
+
+function setBusy(btn,busy){
+  btn.disabled=busy;
+  btn.textContent='';
+  const icon=document.createElement('i');
+  icon.className=busy?'fas fa-spinner fa-spin':'fas fa-arrow-right';
+  btn.append(icon,busy?' Creating your account…':' Continue to Payment');
+}
+
+// ===== Sign up: the server saves the account, then the user pays =====
+document.getElementById('signupForm').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const btn=document.getElementById('signupBtn');
+  const errorBox=document.getElementById('signupError');
+
+  const fullName=document.getElementById('suName').value.trim();
+  const businessName=document.getElementById('suBusiness').value.trim();
+  const email=document.getElementById('suEmail').value.trim();
+  const phone=document.getElementById('suPhone').value.trim();
+  const password=document.getElementById('password').value;
 
   function fail(message){
-    errorBox.textContent = message;
-    errorBox.style.display = 'block';
+    errorBox.textContent=message;
+    errorBox.style.display='block';
   }
 
-  if (fullName.length < 2) return fail('Please enter your full name.');
-  if (businessName.length < 2) return fail('Please enter your business name.');
-  if (!/^\S+@\S+\.\S+$/.test(email)) return fail('Please enter a valid email address.');
-  if (phone.replace(/\D/g, '').length < 10) return fail('Please enter a valid WhatsApp number, e.g. +91 98765 43210.');
-  if (password.length < 8) return fail('Password must be at least 8 characters.');
+  // Quick checks for instant feedback; the server checks everything again.
+  if(fullName.length<2) return fail('Please enter your full name.');
+  if(businessName.length<2) return fail('Please enter your business name.');
+  if(!/^\S+@\S+\.\S+$/.test(email)) return fail('Please enter a valid email address.');
+  if(phone.replace(/\D/g,'').length<10) return fail('Please enter a valid WhatsApp number, e.g. +91 98765 43210.');
+  if(password.length<8) return fail('Password must be at least 8 characters.');
 
-  errorBox.style.display = 'none';
-  btn.disabled = true;
-  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating your account…';
+  errorBox.style.display='none';
+  setBusy(btn,true);
 
-  // Remember the new user, so the dashboard profile menu shows their name
-  try {
-    localStorage.setItem('selectedAccount', JSON.stringify({
-      name: fullName, business: businessName, email: email, phone: phone
-    }));
-  } catch (err) {}
-
-  setTimeout(() => { window.location.href = 'payment.html'; }, 700);
+  try{
+    const me=await api('/auth/signup',{method:'POST',body:{fullName,businessName,email,phone,password}});
+    window.location.replace(STEP_PAGES[me.account&&me.account.nextStep]||'payment.html');
+  }catch(err){
+    fail(err.status?err.message:'Cannot reach the server. Check your internet connection and try again.');
+    setBusy(btn,false);
+  }
 });
 </script>
 
