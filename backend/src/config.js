@@ -24,6 +24,12 @@ const config = {
     cookieName: 'vx_session',
     days: 30,
   },
+  // Development shortcuts while Razorpay and WhatsApp are not set up.
+  // Turned on in .env; always OFF when NODE_ENV=production.
+  dev: {
+    skipPayment: !isProd && process.env.DEV_SKIP_PAYMENT === 'true',
+    skipPhoneVerify: !isProd && process.env.DEV_SKIP_PHONE_VERIFY === 'true',
+  },
   // Password reset links stop working after this many minutes
   passwordReset: {
     minutes: 30,

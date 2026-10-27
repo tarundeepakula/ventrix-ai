@@ -11,6 +11,7 @@ const { newToken, hashToken } = require('../../lib/tokens');
 const { createSession, clearSessionCookie } = require('../../lib/session');
 const { sendEmail } = require('../../lib/email');
 const { requireAuth } = require('../../middleware/auth');
+const { accountStatus } = require('../../lib/account');
 const { HttpError } = require('../../middleware/errors');
 
 const router = express.Router();
@@ -90,6 +91,12 @@ function publicProfile(user, business) {
   };
 }
 
+// Profile + where the account is in the setup steps (payment, verify-phone, dashboard).
+async function profileWithAccount(user, business) {
+  const account = await accountStatus(user);
+  return { ...publicProfile(user, business), account, plan: { active: account.paid } };
+}
+
 // ---------- Routes ----------
 
 // POST /api/v1/auth/signup  (signup.html)
@@ -125,7 +132,7 @@ router.post('/signup', authLimiter, async (req, res) => {
   const user = business.users[0];
 
   await createSession(user, req, res);
-  res.status(201).json(publicProfile(user, business));
+  res.status(201).json(await profileWithAccount(user, business));
 });
 
 // POST /api/v1/auth/login  (login.html)
@@ -150,7 +157,7 @@ router.post('/login', authLimiter, async (req, res) => {
   }
 
   await createSession(user, req, res);
-  res.json(publicProfile(user, user.business));
+  res.json(await profileWithAccount(user, user.business));
 });
 
 // POST /api/v1/auth/logout  (logout buttons on every page)
@@ -164,8 +171,8 @@ router.post('/logout', async (req, res) => {
 });
 
 // GET /api/v1/auth/me  (every dashboard page checks this first)
-router.get('/me', requireAuth, (req, res) => {
-  res.json(publicProfile(req.user, req.business));
+router.get('/me', requireAuth, async (req, res) => {
+  res.json(await profileWithAccount(req.user, req.business));
 });
 
 // POST /api/v1/auth/forgot-password  (login.html, "Forgot password?")

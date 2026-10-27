@@ -4,6 +4,7 @@ const config = require('../config');
 const prisma = require('../lib/prisma');
 const { hashToken } = require('../lib/tokens');
 const { clearSessionCookie } = require('../lib/session');
+const { accountStatus } = require('../lib/account');
 
 async function requireAuth(req, res, next) {
   const token = req.cookies?.[config.session.cookieName];
@@ -31,4 +32,18 @@ async function requireAuth(req, res, next) {
   next();
 }
 
-module.exports = { requireAuth };
+// For dashboard features: also needs a paid plan and a verified phone
+// (or the development shortcuts in .env). Use after requireAuth.
+async function requireActive(req, res, next) {
+  const account = await accountStatus(req.user);
+  if (account.nextStep !== 'dashboard') {
+    return res.status(403).json({
+      error: 'Please finish setting up your account first.',
+      nextStep: account.nextStep,
+    });
+  }
+  req.account = account;
+  next();
+}
+
+module.exports = { requireAuth, requireActive };

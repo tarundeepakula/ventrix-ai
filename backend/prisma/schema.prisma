@@ -15,6 +15,13 @@ enum UserRole {
   AGENT
 }
 
+enum SubscriptionStatus {
+  PENDING
+  ACTIVE
+  CANCELLED
+  EXPIRED
+}
+
 // One business per signup.
 model Business {
   id              String   @id @default(uuid())
@@ -29,7 +36,8 @@ model Business {
   createdAt       DateTime @default(now()) @map("created_at")
   updatedAt       DateTime @updatedAt @map("updated_at")
 
-  users User[]
+  users         User[]
+  subscriptions Subscription[]
 
   @@map("businesses")
 }
@@ -85,4 +93,20 @@ model PasswordResetToken {
 
   @@index([userId])
   @@map("password_reset_tokens")
+}
+
+// The business's plan. Razorpay turns it ACTIVE after a verified payment (later step).
+model Subscription {
+  id               String             @id @default(uuid())
+  businessId       String             @map("business_id")
+  plan             String             @default("growth")
+  status           SubscriptionStatus @default(PENDING)
+  currentPeriodEnd DateTime?          @map("current_period_end")
+  createdAt        DateTime           @default(now()) @map("created_at")
+  updatedAt        DateTime           @updatedAt @map("updated_at")
+
+  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@index([businessId, status])
+  @@map("subscriptions")
 }

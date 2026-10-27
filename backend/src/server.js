@@ -8,6 +8,9 @@ const server = app.listen(config.port, (error) => {
     process.exit(1);
   }
   console.log(`Ventrix AI backend running at ${config.appUrl}`);
+
+  if (config.dev.skipPayment) console.warn('DEV MODE: payment step is skipped (DEV_SKIP_PAYMENT=true)');
+  if (config.dev.skipPhoneVerify) console.warn('DEV MODE: phone verification is skipped (DEV_SKIP_PHONE_VERIFY=true)');
 });
 
 // Stop cleanly when you press Ctrl + C
