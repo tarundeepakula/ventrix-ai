@@ -1,44 +1,80 @@
-// Builds the Express app: security, the API and your pages.
-const path = require('path');
-const express = require('express');
-const helmet = require('helmet');
-const cookieParser = require('cookie-parser');
 
-const config = require('./config');
-const prisma = require('./lib/prisma');
-const authRoutes = require('./modules/auth/auth.routes');
-const { notFound, errorHandler } = require('./middleware/errors');
+const express = require("express");
+const helmet = require("helmet");
+const cors = require("cors");
+const path = require("path");
+const cookieParser = require("cookie-parser");
+
+const prisma = require("./lib/prisma");
+const authRoutes = require("./modules/auth/auth.routes");
+const phoneRoutes = require("./modules/auth/phones.routes");
+const contactRoutes = require("./modules/contacts/contacts.routes");
+const dashboardRoutes = require("./modules/dashboard/dashboard.routes");
+const { errorHandler } = require("./middleware/errors");
 
 const app = express();
 
-// When hosted behind a load balancer, trust it to tell us the visitor's IP.
-if (config.isProd) app.set('trust proxy', 1);
+app.disable("x-powered-by");
 
-// Security headers. The Content Security Policy stays off until the
-// pages' inline scripts move into .js files (a later step in the plan).
-app.use(helmet({ contentSecurityPolicy: false }));
-app.use(express.json({ limit: '1mb' }));
+// Allow the frontend to communicate with the backend.
+app.use(
+  cors({
+    origin: [
+      "http://127.0.0.1:5500",
+      "http://localhost:5500"
+    ],
+    credentials: true
+  })
+);
+
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+  })
+);
+
+app.use(express.json({ limit: "1mb" }));
+app.use(express.urlencoded({ extended: false, limit: "1mb" }));
 app.use(cookieParser());
 
-// ---------- API: every route starts with /api/v1 ----------
-const api = express.Router();
+// Check API and database connectivity.
+app.get("/api/v1/health", async (req, res, next) => {
+  try {
+    await prisma.$queryRaw`SELECT 1`;
 
-api.get('/health', async (req, res) => {
-  await prisma.$queryRaw`SELECT 1`; // fails if the database can't be reached
-  res.json({ ok: true, database: 'connected', time: new Date().toISOString() });
+    res.status(200).json({
+      success: true,
+      message: "Ventrix AI API is running",
+      database: "connected",
+    });
+  } catch (error) {
+    next(error);
+  }
 });
 
-api.use('/auth', authRoutes); // signup, login, logout, me, forgot and reset password
+// Register API routes.
+app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/auth/phone", phoneRoutes);
+app.use("/api/v1/contacts", contactRoutes);
+app.use("/api/v1/dashboard", dashboardRoutes);
 
-app.use('/api/v1', api);
+// Serve the existing website.
+app.use(express.static(path.join(__dirname, "../public")));
 
-// Any other /api address that does not exist
-app.use('/api', notFound);
+// Unknown API endpoints.
+app.use("/api", (req, res) => {
+  res.status(404).json({
+    success: false,
+    message: "API endpoint not found",
+  });
+});
 
-// ---------- Your pages (from the public folder) ----------
-app.use(express.static(path.join(__dirname, '..', 'public')));
+// Unknown website pages.
+app.use((req, res) => {
+  res.status(404).send("Page not found");
+});
 
-// ---------- Errors: turns any error into a clean JSON message ----------
+// Error handler must be last.
 app.use(errorHandler);
 
 module.exports = app;

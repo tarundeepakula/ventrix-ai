@@ -1,0 +1,1130 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#f5f7fa" />
+
+  <title>Phone Verification | Ventrix AI</title>
+  <meta
+    name="description"
+    content="Verify your phone number to continue to your Ventrix AI dashboard."
+  />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    :root {
+      --blue: #226db4;
+      --blue-dark: #185a97;
+      --blue-light: #eaf3fb;
+
+      --green: #25d366;
+      --green-dark: #128c7e;
+      --green-deep: #075e54;
+      --green-soft: #eaf9ef;
+
+      --ink: #1b2a3a;
+      --text: #4a5a6a;
+      --muted: #68798a;
+
+      --bg: #f5f7fa;
+      --white: #ffffff;
+      --border: #dfe5ec;
+
+      --shadow: 0 8px 24px rgba(27, 42, 58, 0.08);
+      --radius: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Inter", Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.65;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .topbar {
+      width: 100%;
+      min-height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px 24px;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .brand img {
+      display: block;
+      width: 175px;
+      max-width: 60vw;
+      height: auto;
+      object-fit: contain;
+    }
+
+    main {
+      width: 100%;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 42px 20px;
+    }
+
+    .verification-card {
+      width: 100%;
+      max-width: 470px;
+      padding: 34px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 30px;
+    }
+
+    .step-label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+
+    .back-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 11px;
+      color: var(--text);
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      font-size: 12px;
+      font-weight: 600;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .back-button:hover {
+      background: var(--bg);
+      border-color: #c7d2df;
+    }
+
+    .icon-circle {
+      width: 66px;
+      height: 66px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      color: var(--blue);
+      background: var(--blue-light);
+      border-radius: 18px;
+    }
+
+    .icon-circle svg {
+      width: 31px;
+      height: 31px;
+    }
+
+    h1 {
+      margin-bottom: 12px;
+      color: var(--ink);
+      font-size: clamp(25px, 5vw, 30px);
+      font-weight: 800;
+      line-height: 1.25;
+      letter-spacing: -0.8px;
+    }
+
+    .subtitle {
+      margin-bottom: 28px;
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .field-label {
+      display: block;
+      margin-bottom: 9px;
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .phone-input-wrap {
+      display: flex;
+      align-items: stretch;
+      width: 100%;
+      min-height: 52px;
+      margin-bottom: 8px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--white);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .phone-input-wrap:focus-within {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(34, 109, 180, 0.1);
+    }
+
+    .country-code {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: #f8fafc;
+      border-right: 1px solid var(--border);
+      border-radius: 9px 0 0 9px;
+      font-size: 14px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .phone-input {
+      width: 100%;
+      min-width: 0;
+      padding: 0 14px;
+      color: var(--ink);
+      background: transparent;
+      border: 0;
+      outline: 0;
+      border-radius: 0 10px 10px 0;
+      font-size: 15px;
+      letter-spacing: 0.3px;
+    }
+
+    .phone-input::placeholder,
+    .otp-input::placeholder {
+      color: #a0acb9;
+    }
+
+    .helper-text {
+      margin-bottom: 22px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .primary-button {
+      width: 100%;
+      min-height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 18px;
+      color: var(--white);
+      background: linear-gradient(135deg, var(--green), var(--green-dark));
+      border: 0;
+      border-radius: 10px;
+      box-shadow: 0 5px 14px rgba(18, 140, 126, 0.15);
+      font-size: 14px;
+      font-weight: 700;
+      transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
+    }
+
+    .primary-button:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(18, 140, 126, 0.2);
+      filter: brightness(1.02);
+    }
+
+    .primary-button svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .security-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-top: 22px;
+      padding: 13px;
+      color: var(--text);
+      background: #f8fafc;
+      border: 1px solid #edf1f5;
+      border-radius: 10px;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .security-note svg {
+      width: 17px;
+      height: 17px;
+      flex-shrink: 0;
+      margin-top: 1px;
+      color: var(--blue);
+    }
+
+    .security-note strong {
+      color: var(--ink);
+    }
+
+    .status-message {
+      display: none;
+      margin-bottom: 18px;
+      padding: 12px 13px;
+      border: 1px solid transparent;
+      border-radius: 9px;
+      font-size: 13px;
+      line-height: 1.6;
+      overflow-wrap: anywhere;
+    }
+
+    .status-message.visible {
+      display: block;
+    }
+
+    .status-message.error {
+      color: #a12626;
+      background: #fff1f1;
+      border-color: #f4cccc;
+    }
+
+    .status-message.success {
+      color: #176b43;
+      background: var(--green-soft);
+      border-color: #c8ead3;
+    }
+
+    .otp-entry {
+      display: flex;
+      gap: 9px;
+      margin: 8px 0 13px;
+    }
+
+    .otp-input {
+      width: 100%;
+      min-width: 0;
+      height: 54px;
+      color: var(--ink);
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      outline: none;
+      text-align: center;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .otp-input:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(34, 109, 180, 0.1);
+    }
+
+    .sent-to {
+      margin: -10px 0 22px;
+      color: var(--text);
+      font-size: 13px;
+      line-height: 1.7;
+      overflow-wrap: anywhere;
+    }
+
+    .sent-to strong {
+      color: var(--ink);
+    }
+
+    .otp-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 15px 0 22px;
+      font-size: 12px;
+    }
+
+    .text-button {
+      padding: 3px 0;
+      color: var(--blue);
+      background: none;
+      border: 0;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .text-button:hover:not(:disabled) {
+      color: var(--blue-dark);
+      text-decoration: underline;
+    }
+
+    .text-button:disabled {
+      color: var(--muted);
+      opacity: 0.8;
+    }
+
+    .timer-text {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .footer {
+      padding: 20px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.8;
+      text-align: center;
+    }
+
+    .footer a {
+      color: var(--blue);
+      font-weight: 600;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      display: inline-block;
+      border: 2px solid rgba(255, 255, 255, 0.45);
+      border-top-color: var(--white);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @media (max-width: 520px) {
+      .topbar {
+        min-height: 66px;
+        padding: 14px 18px;
+      }
+
+      .brand img {
+        width: 155px;
+      }
+
+      main {
+        align-items: flex-start;
+        padding: 24px 14px;
+      }
+
+      .verification-card {
+        padding: 25px 21px;
+        border-radius: 14px;
+      }
+
+      .card-header {
+        margin-bottom: 25px;
+      }
+
+      .icon-circle {
+        width: 58px;
+        height: 58px;
+        margin-bottom: 20px;
+        border-radius: 15px;
+      }
+
+      .otp-entry {
+        gap: 6px;
+      }
+
+      .otp-input {
+        height: 49px;
+        font-size: 20px;
+      }
+
+      .footer {
+        padding: 16px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <a class="brand" href="index.html" aria-label="Ventrix AI home">
+      <img src="logo.png" alt="Ventrix AI" />
+    </a>
+  </header>
+
+  <main>
+    <section class="verification-card" aria-labelledby="page-title">
+      <div class="card-header">
+        <span class="step-label" id="step-label">Account verification</span>
+        <button
+          class="back-button"
+          id="back-button"
+          type="button"
+          aria-label="Go back"
+        >
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" aria-hidden="true">
+            <path d="M19 12H5"></path>
+            <path d="m12 19-7-7 7-7"></path>
+          </svg>
+          Back
+        </button>
+      </div>
+
+      <div id="phone-screen">
+        <div class="icon-circle" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="5" y="2" width="14" height="20" rx="3"></rect>
+            <path d="M10 18h4"></path>
+            <path d="m9 8 2 2 4-4"></path>
+          </svg>
+        </div>
+
+        <h1 id="page-title">Verify your phone number</h1>
+
+        <p class="subtitle">
+          Add your mobile number to secure your Ventrix AI account.
+          We’ll send you a verification code to confirm it’s yours.
+        </p>
+
+        <div id="phone-status" class="status-message" role="alert" aria-live="polite"></div>
+
+        <form id="phone-form" novalidate>
+          <label class="field-label" for="phone-number">Mobile number</label>
+
+          <div class="phone-input-wrap">
+            <span class="country-code" aria-label="Country code India">
+              <span aria-hidden="true">🇮🇳</span>
+              +91
+            </span>
+
+            <input
+              class="phone-input"
+              id="phone-number"
+              name="phone"
+              type="tel"
+              inputmode="numeric"
+              autocomplete="tel-national"
+              placeholder="Enter 10-digit number"
+              maxlength="10"
+              pattern="[0-9]{10}"
+              required
+              aria-describedby="phone-help"
+            />
+          </div>
+
+          <p class="helper-text" id="phone-help">
+            Enter your 10-digit Indian mobile number without +91.
+          </p>
+
+          <button class="primary-button" id="send-otp-button" type="submit">
+            <span>Send verification code</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              aria-hidden="true">
+              <path d="M5 12h14"></path>
+              <path d="m12 5 7 7-7 7"></path>
+            </svg>
+          </button>
+        </form>
+
+        <div class="security-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
+            aria-hidden="true">
+            <rect x="4" y="10" width="16" height="11" rx="2"></rect>
+            <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+          </svg>
+          <p>
+            <strong>Your privacy matters.</strong>
+            Your phone number is used for account verification and security.
+          </p>
+        </div>
+      </div>
+
+      <div id="otp-screen" class="hidden">
+        <div class="icon-circle" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="5" width="18" height="14" rx="3"></rect>
+            <path d="m7 10 5 4 5-4"></path>
+          </svg>
+        </div>
+
+        <h1 id="otp-title">Enter your verification code</h1>
+
+        <p class="subtitle">
+          Enter the 6-digit code sent to your mobile number.
+        </p>
+
+        <p class="sent-to">
+          Phone number: <strong id="masked-phone"></strong>
+        </p>
+
+        <div id="otp-status" class="status-message" role="alert" aria-live="polite"></div>
+
+        <form id="otp-form" novalidate>
+          <label class="field-label" for="otp-1">6-digit verification code</label>
+
+          <div class="otp-entry" aria-label="Six-digit verification code">
+            <input class="otp-input" id="otp-1" name="otp-1" type="text"
+              inputmode="numeric" autocomplete="one-time-code" maxlength="1"
+              pattern="[0-9]" aria-label="Digit 1" required />
+            <input class="otp-input" id="otp-2" name="otp-2" type="text"
+              inputmode="numeric" maxlength="1" pattern="[0-9]"
+              aria-label="Digit 2" required />
+            <input class="otp-input" id="otp-3" name="otp-3" type="text"
+              inputmode="numeric" maxlength="1" pattern="[0-9]"
+              aria-label="Digit 3" required />
+            <input class="otp-input" id="otp-4" name="otp-4" type="text"
+              inputmode="numeric" maxlength="1" pattern="[0-9]"
+              aria-label="Digit 4" required />
+            <input class="otp-input" id="otp-5" name="otp-5" type="text"
+              inputmode="numeric" maxlength="1" pattern="[0-9]"
+              aria-label="Digit 5" required />
+            <input class="otp-input" id="otp-6" name="otp-6" type="text"
+              inputmode="numeric" maxlength="1" pattern="[0-9]"
+              aria-label="Digit 6" required />
+          </div>
+
+          <div class="otp-actions">
+            <button class="text-button" id="change-phone-button" type="button">
+              Change number
+            </button>
+
+            <div>
+              <span class="timer-text" id="timer-text">Resend available in 30s</span>
+              <button
+                class="text-button hidden"
+                id="resend-otp-button"
+                type="button"
+              >
+                Resend code
+              </button>
+            </div>
+          </div>
+
+          <button class="primary-button" id="verify-otp-button" type="submit">
+            <span>Verify and continue</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              aria-hidden="true">
+              <path d="m5 12 4 4L19 6"></path>
+            </svg>
+          </button>
+        </form>
+
+        <div class="security-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
+            aria-hidden="true">
+            <rect x="4" y="10" width="16" height="11" rx="2"></rect>
+            <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+          </svg>
+          <p>
+            Never share your verification code with anyone, including people
+            claiming to be from Ventrix AI support.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    &copy; <span id="current-year"></span> Ventrix AI. All rights reserved.
+    <br />
+    Need help? <a href="mailto:support@ventrix.ai">Contact support</a>
+  </footer>
+
+  <script>
+    "use strict";
+
+    /*
+     * BACKEND CONFIGURATION
+     *
+     * These endpoints must be implemented in your Express backend and
+     * connected to a real SMS/WhatsApp OTP provider.
+     *
+     * Expected send request:
+     * POST /api/v1/auth/send-phone-otp
+     * JSON: { "phone": "+91XXXXXXXXXX" }
+     *
+     * Expected verify request:
+     * POST /api/v1/auth/verify-phone-otp
+     * JSON: { "phone": "+91XXXXXXXXXX", "otp": "123456" }
+     *
+     * Both endpoints should return JSON with:
+     * { "success": true, "message": "..." }
+     *
+     * IMPORTANT:
+     * Do not mark a phone number verified on the frontend alone.
+     * The backend must validate the OTP and save the verified status.
+     */
+    const API_BASE = "/api/v1/auth/phone";
+const SEND_OTP_ENDPOINT = `${API_BASE}/send-code`;
+const CHANGE_PHONE_ENDPOINT = `${API_BASE}/change`;
+const VERIFY_OTP_ENDPOINT = `${API_BASE}/verify`;
+
+    /*
+     * Change this only after checking the actual dashboard filename.
+     * The dashboard should also be protected by backend authentication
+     * and phone-verification checks.
+     */
+    const DASHBOARD_URL = "dashboard.html";
+
+    const phoneScreen = document.getElementById("phone-screen");
+    const otpScreen = document.getElementById("otp-screen");
+    const phoneForm = document.getElementById("phone-form");
+    const otpForm = document.getElementById("otp-form");
+    const phoneInput = document.getElementById("phone-number");
+
+    const phoneStatus = document.getElementById("phone-status");
+    const otpStatus = document.getElementById("otp-status");
+
+    const sendOtpButton = document.getElementById("send-otp-button");
+    const verifyOtpButton = document.getElementById("verify-otp-button");
+    const resendOtpButton = document.getElementById("resend-otp-button");
+    const changePhoneButton = document.getElementById("change-phone-button");
+    const backButton = document.getElementById("back-button");
+
+    const maskedPhone = document.getElementById("masked-phone");
+    const timerText = document.getElementById("timer-text");
+    const otpInputs = Array.from(document.querySelectorAll(".otp-input"));
+
+    let currentPhone = "";
+    let resendInterval = null;
+    let resendSeconds = 30;
+    let isRequestInProgress = false;
+
+    document.getElementById("current-year").textContent =
+      new Date().getFullYear();
+
+    function showMessage(element, message, type = "error") {
+      element.textContent = message;
+      element.className = `status-message visible ${type}`;
+    }
+
+    function clearMessage(element) {
+      element.textContent = "";
+      element.className = "status-message";
+    }
+
+    function setButtonLoading(button, loading, loadingText, originalText) {
+      button.disabled = loading;
+
+      if (loading) {
+        button.innerHTML =
+          `<span class="spinner" aria-hidden="true"></span>` +
+          `<span>${loadingText}</span>`;
+      } else {
+        button.innerHTML = originalText;
+      }
+    }
+
+    function originalButtonContent(button) {
+      return button.dataset.originalContent || button.innerHTML;
+    }
+
+    [sendOtpButton, verifyOtpButton, resendOtpButton].forEach((button) => {
+      button.dataset.originalContent = button.innerHTML;
+    });
+
+    async function postJSON(url, payload) {
+      let response;
+
+      try {
+        response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          credentials: "same-origin",
+          body: JSON.stringify(payload)
+        });
+      } catch {
+        throw new Error(
+          "Unable to connect to the server. Check that the Ventrix AI backend is running."
+        );
+      }
+
+      let data = {};
+
+      try {
+        data = await response.json();
+      } catch {
+        // The server did not return JSON.
+      }
+
+      if (!response.ok || data.success === false) {
+        if (response.status === 404) {
+          throw new Error(
+            "The phone OTP API is not available yet. The backend endpoints must be implemented first."
+          );
+        }
+
+        throw new Error(
+          data.message || "The request could not be completed. Please try again."
+        );
+      }
+
+      if (data.success !== true) {
+        throw new Error(
+          "The server did not confirm the request. Please check the backend response."
+        );
+      }
+
+      return data;
+    }
+
+    function normalisePhone(value) {
+      return value.replace(/\D/g, "").slice(0, 10);
+    }
+
+    function formatPhoneForDisplay(phone) {
+      return `+91 ${phone.slice(0, 5)} ${phone.slice(5)}`;
+    }
+
+    function maskPhone(phone) {
+      return `+91 ${phone.slice(0, 2)}•••••${phone.slice(-3)}`;
+    }
+
+    function getOtpValue() {
+      return otpInputs.map((input) => input.value).join("");
+    }
+
+    function clearOtpInputs() {
+      otpInputs.forEach((input) => {
+        input.value = "";
+      });
+    }
+
+    function stopResendTimer() {
+      if (resendInterval) {
+        clearInterval(resendInterval);
+        resendInterval = null;
+      }
+    }
+
+    function startResendTimer() {
+      stopResendTimer();
+
+      resendSeconds = 30;
+      timerText.classList.remove("hidden");
+      resendOtpButton.classList.add("hidden");
+      timerText.textContent = `Resend available in ${resendSeconds}s`;
+
+      resendInterval = setInterval(() => {
+        resendSeconds -= 1;
+
+        if (resendSeconds <= 0) {
+          stopResendTimer();
+          timerText.classList.add("hidden");
+          resendOtpButton.classList.remove("hidden");
+          return;
+        }
+
+        timerText.textContent = `Resend available in ${resendSeconds}s`;
+      }, 1000);
+    }
+
+    function showOtpScreen() {
+      phoneScreen.classList.add("hidden");
+      otpScreen.classList.remove("hidden");
+      document.getElementById("step-label").textContent = "Code verification";
+      document.getElementById("page-title").textContent =
+        "Enter your verification code";
+
+      maskedPhone.textContent = maskPhone(currentPhone);
+      clearMessage(otpStatus);
+      clearOtpInputs();
+      startResendTimer();
+
+      setTimeout(() => otpInputs[0].focus(), 100);
+    }
+
+    function showPhoneScreen() {
+      stopResendTimer();
+      otpScreen.classList.add("hidden");
+      phoneScreen.classList.remove("hidden");
+      document.getElementById("step-label").textContent =
+        "Account verification";
+
+      clearMessage(phoneStatus);
+      clearMessage(otpStatus);
+      setTimeout(() => phoneInput.focus(), 100);
+    }
+
+    phoneInput.addEventListener("input", () => {
+      phoneInput.value = normalisePhone(phoneInput.value);
+      clearMessage(phoneStatus);
+    });
+
+    phoneForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      if (isRequestInProgress) return;
+
+      const phone = normalisePhone(phoneInput.value);
+
+      if (!/^[6-9]\d{9}$/.test(phone)) {
+        showMessage(
+          phoneStatus,
+          "Enter a valid 10-digit Indian mobile number starting with 6, 7, 8 or 9."
+        );
+        phoneInput.focus();
+        return;
+      }
+
+      currentPhone = phone;
+      isRequestInProgress = true;
+
+      setButtonLoading(
+        sendOtpButton,
+        true,
+        "Sending code...",
+        originalButtonContent(sendOtpButton)
+      );
+
+      clearMessage(phoneStatus);
+
+      try {
+        await postJSON(CHANGE_PHONE_ENDPOINT, {
+  phone: `+91${currentPhone}`
+});
+
+        showOtpScreen();
+      } catch (error) {
+        showMessage(phoneStatus, error.message);
+      } finally {
+        isRequestInProgress = false;
+
+        setButtonLoading(
+          sendOtpButton,
+          false,
+          "",
+          originalButtonContent(sendOtpButton)
+        );
+      }
+    });
+
+    otpInputs.forEach((input, index) => {
+      input.addEventListener("input", () => {
+        input.value = input.value.replace(/\D/g, "").slice(-1);
+        clearMessage(otpStatus);
+
+        if (input.value && index < otpInputs.length - 1) {
+          otpInputs[index + 1].focus();
+        }
+      });
+
+      input.addEventListener("keydown", (event) => {
+        if (
+          event.key === "Backspace" &&
+          !input.value &&
+          index > 0
+        ) {
+          otpInputs[index - 1].focus();
+        }
+
+        if (event.key === "ArrowLeft" && index > 0) {
+          otpInputs[index - 1].focus();
+        }
+
+        if (
+          event.key === "ArrowRight" &&
+          index < otpInputs.length - 1
+        ) {
+          otpInputs[index + 1].focus();
+        }
+      });
+
+      input.addEventListener("paste", (event) => {
+        event.preventDefault();
+
+        const pasted = (
+          event.clipboardData || window.clipboardData
+        ).getData("text").replace(/\D/g, "").slice(0, 6);
+
+        if (!pasted) return;
+
+        otpInputs.forEach((otpInput, otpIndex) => {
+          otpInput.value = pasted[otpIndex] || "";
+        });
+
+        otpInputs[Math.min(pasted.length, 5)].focus();
+        clearMessage(otpStatus);
+      });
+    });
+
+    otpForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      if (isRequestInProgress) return;
+
+      const otp = getOtpValue();
+
+      if (!/^\d{6}$/.test(otp)) {
+        showMessage(otpStatus, "Enter all 6 digits of your verification code.");
+        otpInputs.find((input) => !input.value)?.focus();
+        return;
+      }
+
+      isRequestInProgress = true;
+
+      setButtonLoading(
+        verifyOtpButton,
+        true,
+        "Verifying code...",
+        originalButtonContent(verifyOtpButton)
+      );
+
+      clearMessage(otpStatus);
+
+      try {
+        const data = await postJSON(VERIFY_OTP_ENDPOINT, {
+  otp
+});
+
+        /*
+         * Only the backend may confirm that the phone is verified.
+         * If your backend requires a separate payment check, enforce it
+         * on the server too. Do not trust localStorage as proof of payment.
+         */
+        showMessage(
+          otpStatus,
+          data.message || "Phone number verified. Continuing...",
+          "success"
+        );
+
+        stopResendTimer();
+
+        window.setTimeout(() => {
+          window.location.assign(DASHBOARD_URL);
+        }, 700);
+      } catch (error) {
+        showMessage(otpStatus, error.message);
+        clearOtpInputs();
+        otpInputs[0].focus();
+      } finally {
+        isRequestInProgress = false;
+
+        setButtonLoading(
+          verifyOtpButton,
+          false,
+          "",
+          originalButtonContent(verifyOtpButton)
+        );
+      }
+    });
+
+    resendOtpButton.addEventListener("click", async () => {
+      if (isRequestInProgress || !currentPhone) return;
+
+      isRequestInProgress = true;
+
+      setButtonLoading(
+        resendOtpButton,
+        true,
+        "Sending...",
+        originalButtonContent(resendOtpButton)
+      );
+
+      clearMessage(otpStatus);
+
+      try {
+        await postJSON(CHANGE_PHONE_ENDPOINT, {
+  phone: `+91${currentPhone}`
+});
+
+        showMessage(otpStatus, "A new verification code has been requested.", "success");
+        clearOtpInputs();
+        startResendTimer();
+        otpInputs[0].focus();
+      } catch (error) {
+        showMessage(otpStatus, error.message);
+      } finally {
+        isRequestInProgress = false;
+
+        setButtonLoading(
+          resendOtpButton,
+          false,
+          "",
+          originalButtonContent(resendOtpButton)
+        );
+      }
+    });
+
+    changePhoneButton.addEventListener("click", () => {
+      currentPhone = "";
+      phoneInput.value = "";
+      showPhoneScreen();
+    });
+
+    backButton.addEventListener("click", () => {
+      if (!otpScreen.classList.contains("hidden")) {
+        showPhoneScreen();
+      } else {
+        window.history.back();
+      }
+    });
+  </script>
+</body>
+</html>
+```

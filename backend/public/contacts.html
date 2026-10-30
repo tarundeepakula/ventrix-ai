@@ -226,11 +226,12 @@ tr:hover td{background:#f8fcfa}
     <table style="margin-top:16px">
       <thead><tr><th>Name</th><th>Phone</th><th>Language</th><th>AI Tag</th><th>Actions</th></tr></thead>
       <tbody id="contactTable">
-        <tr data-lang="Telugu" data-tag="Customer"><td>Kiran Reddy</td><td>+91 94•••••567</td><td><span class="lang-tag">Telugu</span></td><td><span class="pill p-green">Customer</span></td><td><div class="actions"><button title="Edit"><i class="bi bi-pencil"></i></button><button class="del" title="Delete" onclick="delRow(this)"><i class="bi bi-trash"></i></button></div></td></tr>
-        <tr data-lang="English" data-tag="Hot Lead"><td>Priya Mehta</td><td>+91 97•••••431</td><td><span class="lang-tag">English</span></td><td><span class="pill p-orange">Hot Lead</span></td><td><div class="actions"><button title="Edit"><i class="bi bi-pencil"></i></button><button class="del" title="Delete" onclick="delRow(this)"><i class="bi bi-trash"></i></button></div></td></tr>
-        <tr data-lang="Hindi" data-tag="Follow-up"><td>Rahul Sharma</td><td>+91 98•••••210</td><td><span class="lang-tag">Hindi</span></td><td><span class="pill p-blue">Follow-up</span></td><td><div class="actions"><button title="Edit"><i class="bi bi-pencil"></i></button><button class="del" title="Delete" onclick="delRow(this)"><i class="bi bi-trash"></i></button></div></td></tr>
-        <tr data-lang="Telugu" data-tag="Interested"><td>Lakshmi Devi</td><td>+91 93•••••812</td><td><span class="lang-tag">Telugu</span></td><td><span class="pill p-orange">Interested</span></td><td><div class="actions"><button title="Edit"><i class="bi bi-pencil"></i></button><button class="del" title="Delete" onclick="delRow(this)"><i class="bi bi-trash"></i></button></div></td></tr>
-      </tbody>
+  <tr>
+    <td colspan="5" style="text-align:center;padding:24px;">
+      Loading contacts...
+    </td>
+  </tr>
+</tbody>
     </table>
   </div>
 
@@ -253,116 +254,400 @@ tr:hover td{background:#f8fcfa}
   </div>
 </div>
 
+
 <script>
-  // ===== Profile avatar + dropdown + logout =====
-function setAvatar(el,acc,initials){
-  if(acc.photo){
-    const img=new Image();
-    img.alt=acc.name||'Profile';
-    img.onload=()=>{el.textContent='';el.appendChild(img);};
-    img.onerror=()=>{el.textContent=initials;};
-    img.src=acc.photo;
-  }else{ el.textContent=initials; }
-}
-function loadProfileAvatar(){
-  let acc=null;
-  try{acc=JSON.parse(localStorage.getItem('selectedAccount'));}catch(e){}
-  if(!acc) return;
-  const initials=(acc.name||'').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()||'VT';
-  document.getElementById('profileAvatar').title=acc.name||'Account';
-  document.getElementById('menuName').textContent=acc.name||'My Account';
-  setAvatar(document.getElementById('profileAvatar'),acc,initials);
-  setAvatar(document.getElementById('menuAvatar'),acc,initials);
-}
-loadProfileAvatar();
+  // ===== Profile avatar and dropdown =====
+  function setAvatar(el, acc, initials) {
+    if (!el) return;
 
-const profileBtn=document.getElementById('profileAvatar'),profileMenu=document.getElementById('profileMenu');
-function closeProfileMenu(){profileMenu.classList.remove('show');profileBtn.setAttribute('aria-expanded','false');}
-profileBtn.addEventListener('click',e=>{
-  e.stopPropagation();
-  const open=profileMenu.classList.toggle('show');
-  profileBtn.setAttribute('aria-expanded',open);
-});
-profileMenu.addEventListener('click',e=>e.stopPropagation());
-document.addEventListener('click',closeProfileMenu);
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeProfileMenu();});
+    if (acc.photo) {
+      const img = new Image();
+      img.alt = acc.name || 'Profile';
+      img.onload = () => {
+        el.replaceChildren(img);
+      };
+      img.onerror = () => {
+        el.textContent = initials;
+      };
+      img.src = acc.photo;
+    } else {
+      el.textContent = initials;
+    }
+  }
 
-function logout(){
-  if(!confirm('Are you sure you want to logout?')) return;
-  localStorage.removeItem('selectedAccount');
-  window.location.href='index.html';   // change to 'login.html' if you have one
-}
-const sidebar=document.getElementById('sidebar'),overlay=document.getElementById('overlay');
-document.getElementById('mobileMenuButton').addEventListener('click',()=>{sidebar.classList.toggle('open');overlay.classList.toggle('show');});
-overlay.addEventListener('click',()=>{sidebar.classList.remove('open');overlay.classList.remove('show');});
+  function loadProfileAvatar() {
+    let acc = null;
 
-function openAdd(){document.getElementById('addModal').classList.add('show');}
-function closeAdd(){document.getElementById('addModal').classList.remove('show');}
+    try {
+      acc = JSON.parse(localStorage.getItem('selectedAccount'));
+    } catch (e) {}
 
-function saveContact(){
-  const name=document.getElementById('cName').value.trim();
-  const phone=document.getElementById('cPhone').value.trim();
-  const lang=document.getElementById('cLang').value;
-  const tag=document.getElementById('cTag').value;
-  if(!name||!phone){alert('Enter name and phone number.');return;}
-  const row=document.createElement('tr');
-  row.dataset.lang=lang;row.dataset.tag=tag;
-  row.innerHTML='<td>'+name+'</td><td>'+phone+'</td><td><span class="lang-tag">'+lang+'</span></td><td><span class="pill '+(tag==='Customer'?'p-green':tag==='Hot Lead'?'p-orange':'p-blue')+'">'+tag+'</span></td><td><div class="actions"><button title="Edit"><i class="bi bi-pencil"></i></button><button class="del" title="Delete" onclick="delRow(this)"><i class="bi bi-trash"></i></button></div></td>';
-  document.getElementById('contactTable').prepend(row);
-  closeAdd();
-  document.getElementById('cName').value='';document.getElementById('cPhone').value='';
-  alert('Contact "'+name+'" added. AI will auto-tag it based on chat history.');
-}
+    if (!acc) return;
 
-function autoTag(){
-  const btn=event.target.closest('button');
-  btn.innerHTML='<i class="bi bi-arrow-repeat"></i> AI Tagging...';
-  setTimeout(()=>{
-    btn.innerHTML='<i class="bi bi-tags"></i> Auto-Tag All';
-    alert('AI tagged all contacts successfully. 86% accuracy based on chat history.');
-  },1500);
-}
+    const initials =
+      (acc.name || '')
+        .split(' ')
+        .filter(Boolean)
+        .map(w => w[0])
+        .join('')
+        .slice(0, 2)
+        .toUpperCase() || 'VT';
 
-function delRow(btn){if(confirm('Delete this contact?'))btn.closest('tr').remove();}
+    const profileAvatar = document.getElementById('profileAvatar');
+    const menuName = document.getElementById('menuName');
+    const menuAvatar = document.getElementById('menuAvatar');
 
-function filterTable(){
-  const q=document.getElementById('searchBox').value.toLowerCase();
-  const lang=document.getElementById('langFilter').value;
-  const tag=document.getElementById('tagFilter').value;
-  document.querySelectorAll('#contactTable tr').forEach(r=>{
-    const matchQ=r.textContent.toLowerCase().includes(q);
-    const matchL=lang==='all'||r.dataset.lang===lang;
-    const matchT=tag==='all'||r.dataset.tag===tag;
-    r.style.display=(matchQ&&matchL&&matchT)?'':'none';
-  });
-}
+    if (profileAvatar) profileAvatar.title = acc.name || 'Account';
+    if (menuName) menuName.textContent = acc.name || 'My Account';
 
-function importContacts(){
-  const input=document.createElement('input');
-  input.type='file';input.accept='.csv,.xlsx';
-  input.onchange=()=>{
-    const row=document.createElement('tr');
-    row.dataset.lang='Telugu';row.dataset.tag='Customer';
-    row.innerHTML='<td>Imported contacts</td><td>'+input.files[0].name+'</td><td><span class="lang-tag">Mixed</span></td><td><span class="pill p-green">Customer</span></td><td><div class="actions"><button class="del" onclick="delRow(this)"><i class="bi bi-trash"></i></button></div></td>';
-    document.getElementById('contactTable').prepend(row);
-    alert('Contacts imported. AI will auto-tag them.');
-  };
-  input.click();
-}
+    setAvatar(profileAvatar, acc, initials);
+    setAvatar(menuAvatar, acc, initials);
+  }
 
-function exportContacts(){
-  const rows=[['Name','Phone','Language','Tag']];
-  document.querySelectorAll('#contactTable tr').forEach(r=>{
-    const tds=r.querySelectorAll('td');
-    rows.push([tds[0].textContent,tds[1].textContent,r.dataset.lang,r.dataset.tag]);
-  });
-  const csv=rows.map(r=>r.join(',')).join('\n');
-  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');a.href=url;a.download='contacts.csv';a.click();
-  URL.revokeObjectURL(url);
-  alert('Contacts exported.');
-}
+  loadProfileAvatar();
+
+  const profileBtn = document.getElementById('profileAvatar');
+  const profileMenu = document.getElementById('profileMenu');
+
+  function closeProfileMenu() {
+    if (!profileMenu || !profileBtn) return;
+    profileMenu.classList.remove('show');
+    profileBtn.setAttribute('aria-expanded', 'false');
+  }
+
+  if (profileBtn && profileMenu) {
+    profileBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      const open = profileMenu.classList.toggle('show');
+      profileBtn.setAttribute('aria-expanded', String(open));
+    });
+
+    profileMenu.addEventListener('click', e => e.stopPropagation());
+    document.addEventListener('click', closeProfileMenu);
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeProfileMenu();
+    });
+  }
+
+  // Use the server-backed logout function from auth-guard.js.
+  // Do not replace it with a local-only logout.
+
+  // ===== Mobile sidebar =====
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlay');
+  const mobileMenuButton = document.getElementById('mobileMenuButton');
+
+  if (mobileMenuButton && sidebar && overlay) {
+    mobileMenuButton.addEventListener('click', () => {
+      sidebar.classList.toggle('open');
+      overlay.classList.toggle('show');
+    });
+
+    overlay.addEventListener('click', () => {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('show');
+    });
+  }
+
+  // ===== Contacts API integration =====
+  let contacts = [];
+  let editingContactId = null;
+  let isSaving = false;
+
+  const table = document.getElementById('contactTable');
+  const modal = document.getElementById('addModal');
+  const nameInput = document.getElementById('cName');
+  const phoneInput = document.getElementById('cPhone');
+  const saveButton = modal?.querySelector('.btn-green');
+
+  function showMessage(message) {
+    alert(message);
+  }
+
+  function openAdd() {
+    editingContactId = null;
+    modal.querySelector('h3').innerHTML =
+      '<i class="bi bi-person-plus" style="color:var(--green-dark)"></i> Add New Contact';
+
+    nameInput.value = '';
+    phoneInput.value = '';
+    modal.classList.add('show');
+    nameInput.focus();
+  }
+
+  function closeAdd() {
+    modal.classList.remove('show');
+    editingContactId = null;
+    isSaving = false;
+
+    if (saveButton) {
+      saveButton.disabled = false;
+      saveButton.innerHTML = '<i class="bi bi-check2"></i> Save';
+    }
+  }
+
+  function updateContactCount() {
+    const count = document.querySelector('.stats .stat h4');
+    if (count) count.textContent = contacts.length.toLocaleString();
+  }
+
+  function makeCell(text) {
+    const td = document.createElement('td');
+    td.textContent = text;
+    return td;
+  }
+
+  function renderContacts() {
+    table.replaceChildren();
+
+    if (contacts.length === 0) {
+      const row = document.createElement('tr');
+      const cell = makeCell('No contacts yet. Click "Add Contact" to create one.');
+      cell.colSpan = 5;
+      cell.style.textAlign = 'center';
+      cell.style.padding = '24px';
+      row.appendChild(cell);
+      table.appendChild(row);
+      updateContactCount();
+      filterTable();
+      return;
+    }
+
+    contacts.forEach(contact => {
+      const row = document.createElement('tr');
+      row.dataset.contactId = contact.id;
+      row.dataset.lang = '';
+      row.dataset.tag = '';
+
+      row.appendChild(makeCell(contact.name));
+      row.appendChild(makeCell(contact.phone));
+      row.appendChild(makeCell('—'));
+      row.appendChild(makeCell('—'));
+
+      const actionsCell = document.createElement('td');
+      const actions = document.createElement('div');
+      actions.className = 'actions';
+
+      const editButton = document.createElement('button');
+      editButton.type = 'button';
+      editButton.title = 'Edit contact';
+      editButton.setAttribute('aria-label', 'Edit ' + contact.name);
+      editButton.innerHTML = '<i class="bi bi-pencil"></i>';
+      editButton.addEventListener('click', () => editContact(contact.id));
+
+      const deleteButton = document.createElement('button');
+      deleteButton.type = 'button';
+      deleteButton.className = 'del';
+      deleteButton.title = 'Delete contact';
+      deleteButton.setAttribute('aria-label', 'Delete ' + contact.name);
+      deleteButton.innerHTML = '<i class="bi bi-trash"></i>';
+      deleteButton.addEventListener('click', () => deleteContact(contact.id));
+
+      actions.append(editButton, deleteButton);
+      actionsCell.appendChild(actions);
+      row.appendChild(actionsCell);
+      table.appendChild(row);
+    });
+
+    updateContactCount();
+    filterTable();
+  }
+
+  async function loadContacts() {
+    table.innerHTML =
+      '<tr><td colspan="5" style="text-align:center;padding:24px;">Loading contacts...</td></tr>';
+
+    try {
+      const result = await api('/contacts');
+      contacts = Array.isArray(result.contacts) ? result.contacts : [];
+      renderContacts();
+    } catch (error) {
+      table.innerHTML = '';
+
+      const row = document.createElement('tr');
+      const cell = makeCell(
+        error.status === 401
+          ? 'Please log in to view your contacts.'
+          : error.message || 'Unable to load contacts.'
+      );
+
+      cell.colSpan = 5;
+      cell.style.textAlign = 'center';
+      cell.style.padding = '24px';
+      row.appendChild(cell);
+      table.appendChild(row);
+
+      if (error.status !== 401) {
+        console.error('Could not load contacts:', error);
+      }
+    }
+  }
+
+  async function saveContact() {
+    if (isSaving) return;
+
+    const name = nameInput.value.trim();
+    const phone = phoneInput.value.trim();
+
+    if (!name || !phone) {
+      showMessage('Enter a contact name and phone number.');
+      return;
+    }
+
+    isSaving = true;
+
+    if (saveButton) {
+      saveButton.disabled = true;
+      saveButton.textContent = 'Saving...';
+    }
+
+    try {
+      const body = { name, phone };
+
+      if (editingContactId) {
+        await api('/contacts/' + encodeURIComponent(editingContactId), {
+          method: 'PATCH',
+          body
+        });
+      } else {
+        await api('/contacts', {
+          method: 'POST',
+          body
+        });
+      }
+
+      closeAdd();
+      await loadContacts();
+
+      showMessage(
+        editingContactId
+          ? 'Contact updated successfully.'
+          : 'Contact added successfully.'
+      );
+    } catch (error) {
+      showMessage(error.message || 'Could not save the contact.');
+    } finally {
+      isSaving = false;
+
+      if (saveButton) {
+        saveButton.disabled = false;
+        saveButton.innerHTML = '<i class="bi bi-check2"></i> Save';
+      }
+    }
+  }
+
+  function editContact(id) {
+    const contact = contacts.find(item => item.id === id);
+    if (!contact) return;
+
+    editingContactId = id;
+    nameInput.value = contact.name;
+    phoneInput.value = contact.phone;
+
+    modal.querySelector('h3').innerHTML =
+      '<i class="bi bi-pencil" style="color:var(--green-dark)"></i> Edit Contact';
+
+    modal.classList.add('show');
+    nameInput.focus();
+  }
+
+  async function deleteContact(id) {
+    const contact = contacts.find(item => item.id === id);
+    if (!contact) return;
+
+    if (!confirm('Delete contact "' + contact.name + '"? This cannot be undone.')) {
+      return;
+    }
+
+    try {
+      await api('/contacts/' + encodeURIComponent(id), {
+        method: 'DELETE'
+      });
+
+      await loadContacts();
+      showMessage('Contact deleted successfully.');
+    } catch (error) {
+      showMessage(error.message || 'Could not delete the contact.');
+    }
+  }
+
+  function filterTable() {
+    const search = document.getElementById('searchBox').value.trim().toLowerCase();
+    const lang = document.getElementById('langFilter').value;
+    const tag = document.getElementById('tagFilter').value;
+
+    document.querySelectorAll('#contactTable tr[data-contact-id]').forEach(row => {
+      const matchesSearch = row.textContent.toLowerCase().includes(search);
+
+      // Language and AI tag aren't currently stored in the database.
+      // Don't hide real contacts based on fields the API doesn't provide.
+      const matchesLanguage = lang === 'all';
+      const matchesTag = tag === 'all';
+
+      row.style.display =
+        matchesSearch && matchesLanguage && matchesTag ? '' : 'none';
+    });
+  }
+
+  function autoTag() {
+    showMessage(
+      'AI auto-tagging is not connected yet. The current Contacts API stores name and phone only.'
+    );
+  }
+
+  function importContacts() {
+    showMessage(
+      'Contact import is not connected yet. We will implement CSV import after the basic Contacts API is verified.'
+    );
+  }
+
+  function exportContacts() {
+    if (!contacts.length) {
+      showMessage('There are no contacts to export.');
+      return;
+    }
+
+    const escapeCsv = value =>
+      '"' + String(value ?? '').replace(/"/g, '""') + '"';
+
+    const rows = [
+      ['Name', 'Phone'],
+      ...contacts.map(contact => [contact.name, contact.phone])
+    ];
+
+    const csv = rows.map(row => row.map(escapeCsv).join(',')).join('\r\n');
+    const blob = new Blob(['\uFEFF' + csv], {
+      type: 'text/csv;charset=utf-8;'
+    });
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'ventrix-contacts.csv';
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // Keep the existing HTML button handlers working.
+  window.openAdd = openAdd;
+  window.closeAdd = closeAdd;
+  window.saveContact = saveContact;
+  window.editContact = editContact;
+  window.deleteContact = deleteContact;
+  window.filterTable = filterTable;
+  window.autoTag = autoTag;
+  window.importContacts = importContacts;
+  window.exportContacts = exportContacts;
+
+  // Load contacts only after auth-guard confirms a valid session.
+  if (window.currentUser) {
+    loadContacts();
+  } else {
+    document.addEventListener('ventrix:ready', loadContacts, { once: true });
+  }
 </script>
+</body>
+</html>
+
 </body>
 </html>

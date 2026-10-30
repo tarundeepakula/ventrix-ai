@@ -1,112 +1,114 @@
-// Ventrix AI database tables.
-// Every table hangs off Business, so each business only ever sees its own data.
-
 generator client {
   provider = "prisma-client-js"
 }
 
+
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
-enum UserRole {
-  OWNER
-  AGENT
-}
-
-enum SubscriptionStatus {
-  PENDING
-  ACTIVE
-  CANCELLED
-  EXPIRED
-}
-
-// One business per signup.
 model Business {
-  id              String   @id @default(uuid())
-  name            String
-  businessType    String?  @map("business_type")
-  city            String?
-  address         String?
-  pincode         String?
-  timezone        String   @default("Asia/Kolkata")
-  defaultLanguage String   @default("en") @map("default_language")
-  logoUrl         String?  @map("logo_url")
-  createdAt       DateTime @default(now()) @map("created_at")
-  updatedAt       DateTime @updatedAt @map("updated_at")
+  id        String   @id @default(cuid())
+  name      String
+  timezone  String   @default("Asia/Kolkata")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   users         User[]
+  contacts      Contact[]
   subscriptions Subscription[]
-
-  @@map("businesses")
 }
 
-// People who log in. The person who signs up is the OWNER.
 model User {
-  id              String    @id @default(uuid())
-  businessId      String    @map("business_id")
-  fullName        String    @map("full_name")
+  id              String    @id @default(cuid())
+  fullName        String
   email           String    @unique
   phone           String    @unique
-  passwordHash    String    @map("password_hash")
-  role            UserRole  @default(OWNER)
-  avatarUrl       String?   @map("avatar_url")
-  phoneVerifiedAt DateTime? @map("phone_verified_at")
-  createdAt       DateTime  @default(now()) @map("created_at")
-  updatedAt       DateTime  @updatedAt @map("updated_at")
+  passwordHash    String
+  role            String    @default("OWNER")
+  avatarUrl       String?
+  emailVerifiedAt DateTime?
+  phoneVerifiedAt DateTime?
+  createdAt       DateTime  @default(now())
 
-  business            Business             @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  phoneVerification PhoneVerification?
+  emailVerification EmailVerification?
+
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
   sessions            Session[]
   passwordResetTokens PasswordResetToken[]
-
-  @@index([businessId])
-  @@map("users")
 }
 
-// A logged-in browser. Only a hash of the cookie is stored.
 model Session {
-  id        String   @id @default(uuid())
-  userId    String   @map("user_id")
-  tokenHash String   @unique @map("token_hash")
-  userAgent String?  @map("user_agent")
-  ipAddress String?  @map("ip_address")
-  expiresAt DateTime @map("expires_at")
-  createdAt DateTime @default(now()) @map("created_at")
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userAgent String?
+  ipAddress String?
 
-  @@index([userId])
-  @@map("sessions")
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-// One-time password reset links. Only a hash of the token is stored.
-model PasswordResetToken {
-  id        String    @id @default(uuid())
-  userId    String    @map("user_id")
-  tokenHash String    @unique @map("token_hash")
-  expiresAt DateTime  @map("expires_at")
-  usedAt    DateTime? @map("used_at")
-  createdAt DateTime  @default(now()) @map("created_at")
+model Contact {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String
+  createdAt DateTime @default(now())
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
 
-  @@index([userId])
-  @@map("password_reset_tokens")
+  @@unique([businessId, phone])
 }
 
-// The business's plan. Razorpay turns it ACTIVE after a verified payment (later step).
 model Subscription {
-  id               String             @id @default(uuid())
-  businessId       String             @map("business_id")
-  plan             String             @default("growth")
-  status           SubscriptionStatus @default(PENDING)
-  currentPeriodEnd DateTime?          @map("current_period_end")
-  createdAt        DateTime           @default(now()) @map("created_at")
-  updatedAt        DateTime           @updatedAt @map("updated_at")
+  id               String    @id @default(cuid())
+  businessId       String
+  business         Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  status           String    @default("INACTIVE")
+  currentPeriodEnd DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
 
-  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+}
 
-  @@index([businessId, status])
-  @@map("subscriptions")
+model PhoneVerification {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  phone     String
+  codeHash  String
+  expiresAt DateTime
+  attempts  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model EmailVerification {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  email     String
+  codeHash  String
+  expiresAt DateTime
+  attempts  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
